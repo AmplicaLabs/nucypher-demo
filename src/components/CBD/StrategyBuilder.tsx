@@ -1,13 +1,28 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Mumbai, useEthers } from "@usedapp/core";
 import { providers } from "ethers";
 import { Cohort, Strategy } from "@nucypher/nucypher-ts";
+import { USER_ADDRESS } from "./constant";
+import { createGroup } from "../../contracts/contractHelper";
 
-function StrategyBuilder({ setDepStrategy, setDepStrategyStatus }: any) {
+function StrategyBuilder({ isStrategyDeployed, setDepStrategy, setGroupId }: any) {
+  const [depStrategyStatus, setDepStrategyStatus] = useState("Deploy Policy");
   const { switchNetwork } = useEthers();
+  const [ strategyName, setStrategyName ] = useState<string>("");
+  const [deployed, setDeployed] = useState<boolean>(false);
+  useEffect(()=>{
+    if( isStrategyDeployed === true){
+      setDepStrategyStatus("Deployed")
+    }
+  }, [isStrategyDeployed])
 
-  const strategyBuild = async () => {
-    setDepStrategyStatus("deploying...");
+  const strategyBuild = async (e: any) => {
+    e.preventDefault();
+
+    const groupId = await createGroup([USER_ADDRESS.Bob, USER_ADDRESS.Charlie]);
+    setGroupId(groupId);
+    setDeployed(true);
+    setDepStrategyStatus("Deploying...");
 
     const cohortConfig = {
       threshold: 3,
@@ -22,19 +37,24 @@ function StrategyBuilder({ setDepStrategy, setDepStrategyStatus }: any) {
     const strategy = Strategy.create(cohort);
 
     const deployedStrategy = await strategy.deploy(
-      `blog-subscription-${Math.floor(Math.random() * 100)}`,
+      strategyName,
       web3Provider
     );
 
-    setDepStrategy(deployedStrategy);
-    setDepStrategyStatus(deployedStrategy.label);
+    // setDepStrategy(deployedStrategy);
+    // setDepStrategyStatus('Deployed '+ deployedStrategy.label);
   };
 
-  return (
-    <button className="cbd-button" onClick={strategyBuild}>
-      Step 2. Deploy Strategy
-    </button>
-  );
+  return (<div className="form-inline">
+      <div className="form-group mx-sm-3 mb-2">
+        <label htmlFor="strategyName" className="label">Strategy Name: </label>
+          <input type="text" id="strategyName" className="form-control" maxLength={50}
+          value={strategyName} onChange={(e) => setStrategyName(e.target.value)} name="strategyName"></input>
+      </div>
+      <button disabled={isStrategyDeployed || deployed} type="button" className="btn btn-primary mb-2" onClick={strategyBuild}>
+        {depStrategyStatus}
+      </button>
+    </div>);
 }
 
 export default StrategyBuilder;

@@ -32,7 +32,7 @@ function Encrypt({ depStrategy, setConditionSets, setEncryptedMessages }: any) {
     const encrypter = depStrategy.encrypter;
 
     const conditionSetBronze = new ConditionSet([
-      new Conditions.Condition(buildERC721BalanceCondConfig(1)),
+      new Conditions.Condition(buildERC721BalanceCondConfig(0)),
     ]);
     const conditionSetSilver = new ConditionSet([
       new Conditions.Condition(buildERC721BalanceCondConfig(2)),

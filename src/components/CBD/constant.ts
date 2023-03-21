@@ -1,0 +1,21 @@
+
+export const USER_ADDRESS: any = {
+    "0xF2D4ee677f31e62c6a78F229A572F67289161Bdc": "Alice",
+    "0x32AA13b0F477cd3f0620CaD3516E1725B1E66c81": "Bob",
+    "0x0E45FAFf8276B40178d731AF26c0b24A19821193": "Charlie",
+    "0x1f90b7402984CE5A6d2DeCFDbE9DEc22c87F659C": "Dave"
+}
+
+export const MEMBER_ADDRESS = [
+    "Alice",
+    "Bob",
+    "Charlie",
+    "Dave"
+]
+
+export enum Members{
+    Alice = 0xF2D4ee677f31e62c6a78F229A572F67289161Bdc,
+    Bob = 0x32AA13b0F477cd3f0620CaD3516E1725B1E66c81,
+    Charlie = 0x0E45FAFf8276B40178d731AF26c0b24A19821193,
+    Dave = 0x1f90b7402984CE5A6d2DeCFDbE9DEc22c87F659C
+}

@@ -4,6 +4,7 @@ import { useEthers } from "@usedapp/core";
 import StrategyBuilder from "./StrategyBuilder";
 import Encrypt from "./Encrypt";
 import Decrypt from "./Decrypt";
+import { Button } from "bootstrap";
 
 function CBDHeader({ setDecryptedMessages }: any) {
   const [depStrategy, setDepStrategy] = useState("null");
@@ -24,19 +25,23 @@ function CBDHeader({ setDecryptedMessages }: any) {
     return encryptedMessages.length !== 0 ? "encrypted" : "not ready";
   }
 
+  function setStratDeploying (text: string){
+    setDepStrategyStatus(text);
+  }
+
   return (
     <div className="cbd-header">
       <div className="row">
         <div className="column">
           <div>
-            <button className="cbd-button" onClick={activateBrowserWallet}>
+            <button className="btn btn-primary" onClick={activateBrowserWallet}>
               Step 1. Connect Wallet
             </button>
           </div>
           <div>
             <StrategyBuilder
               setDepStrategy={setDepStrategy}
-              setDepStrategyStatus={setDepStrategyStatus}
+              setDepStrategyStatus={setStratDeploying}
             />
           </div>
           <div>

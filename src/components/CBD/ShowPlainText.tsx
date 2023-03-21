@@ -1,22 +1,21 @@
-import React, { useState } from "react";
+import React from "react";
 import { providers } from "ethers";
 import type { PolicyMessageKit } from "@nucypher/nucypher-ts";
 
 const subscription = ["bronze", "silver", "gold"];
 
-function Decrypt({
+function ShowPlainText({
   depStrategy,
   conditionSets,
   encryptedMessages,
   setDecryptedMessages,
+  setDecMessagesStatus,
 }: any) {
-
-  const [decMessagesStatus, setDecMessagesStatus] = useState("Show in plain text");
   const decrypt = async () => {
     if (!depStrategy.decrypter) return;
 
     setDecryptedMessages([]);
-    setDecMessagesStatus("Decrypting...");
+    setDecMessagesStatus("decrypting...");
 
     let blogPosts: Object[] = [];
     const web3Provider = new providers.Web3Provider(window.ethereum);
@@ -47,15 +46,16 @@ function Decrypt({
         }
       );
     }
+
     setDecryptedMessages(JSON.stringify(blogPosts));
-    setDecMessagesStatus("Decrypted")
+    setDecMessagesStatus("decrypted")
   };
 
   return (
-    <button className="btn btn-info" onClick={decrypt}>
-      {decMessagesStatus}
+    <button className="cbd-button" onClick={decrypt}>
+      Show in plain text
     </button>
   );
 }
 
-export default Decrypt;
+export default ShowPlainText;
