@@ -1,7 +1,7 @@
 import { customABICondition } from "./customAbiCondition";
 
-//export const CONTRACT_ADDRESS = "0xb4f48E123De3f87fCb3636F8E20A34797DbBf8Ad";
-export const CONTRACT_ADDRESS = "0x3d94af870ED272Cd5370e4135F9B2Bd0e311d65D"
+export const CONTRACT_ADDRESS = "0xb4f48E123De3f87fCb3636F8E20A34797DbBf8Ad";
+//export const CONTRACT_ADDRESS = "0x3d94af870ED272Cd5370e4135F9B2Bd0e311d65D"
 const META_DATA_URL = "ipfs://XX"
 import Web3 from 'web3';
 import Abi from '../scripts/SimpleGroupsMngmt.json';
@@ -189,8 +189,8 @@ const contractABI:any = [
    }
 ];
 const contractAddress = '0xb4f48E123De3f87fCb3636F8E20A34797DbBf8Ad'; // Replace with your contract's address
-const bob = '0x32AA13b0F477cd3f0620CaD3516E1725B1E66c81';
-const charlie = '0x0E45FAFf8276B40178d731AF26c0b24A19821193';
+const bob = '0x44a6533B03294c873aa9935E75C48DD8B27DA3E8';
+const charlie = '0x438F70cC273B5e901e65b78e9259679C2fF3eF2c';
 
 const web3 = new Web3(window.ethereum);
 
@@ -206,6 +206,7 @@ export async function createGroup(members: any) {
    console.log(contract)
    try{
       const result = await contract.methods.createGroup([bob, charlie]).call();
+      //const result = await contract.methods.isMember(8, bob).call();
       console.log(result);
       return result;
    }

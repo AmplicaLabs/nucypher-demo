@@ -12,21 +12,57 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
     const [selGroup, setSelGroup] = useState<any>("null");
     const { switchNetwork } = useEthers();
     const [isGroupCreating, setIsGroupCreating] = useState<boolean>(false);
-    const buildERC721BalanceCondConfig = (balance: number) => {
+    // const buildERC721BalanceCondConfig = (balance: number) => {
+    //     const config = {
+    //       contractAddress: "0xf5de760f2e916647fd766B4AD9E85ff943cE3A2b",
+    //       standardContractType: "ERC721",
+    //       chain: Mumbai.chainId,
+    //       method: "balanceOf",
+    //       parameters: [":userAddress"],
+    //       returnValueTest: {
+    //         comparator: ">=",
+    //         value: balance,
+    //       },
+    //     };
+    //     return config;
+    //   };
+      const buildERC721BalanceCondConfig = (balance: number) => {
         const config = {
-          contractAddress: "0xf5de760f2e916647fd766B4AD9E85ff943cE3A2b",
-          standardContractType: "ERC721",
-          chain: Mumbai.chainId,
-          method: "balanceOf",
-          parameters: [":userAddress"],
-          returnValueTest: {
-            comparator: ">=",
-            value: balance,
-          },
+         contractAddress: '0xb4f48E123De3f87fCb3636F8E20A34797DbBf8Ad',
+         chain: Mumbai.chainId,
+         method: 'isMember',
+         parameters: [6, ':userAddress'],
+         functionAbi: {
+           "inputs": [
+           {
+               "internalType": "int32",
+               "name": "groupId",
+               "type": "int32"
+           },
+           {
+               "internalType": "address",
+               "name": "account",
+               "type": "address"
+           }
+           ],
+           "name": "isMember",
+           "outputs": [
+           {
+               "internalType": "bool",
+               "name": "",
+               "type": "bool"
+           }
+           ],
+           "stateMutability": "view",
+           "type": "function"
+         },
+         returnValueTest: {
+           comparator: '==',
+           value: true,
+         },
         };
-        return config;
-      };
-
+        return config;    
+       };  
     function getRow(group: any, index: number) {
         const mem = group.members.toString();
         return(<tr key={index}>

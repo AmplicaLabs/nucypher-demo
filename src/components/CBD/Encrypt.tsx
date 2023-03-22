@@ -8,20 +8,58 @@ import {
 } from "../Blog/BlogData";
 
 function Encrypt({ depStrategy, setConditionSets, setEncryptedMessages }: any) {
+  
+  // const buildERC721BalanceCondConfig = (balance: number) => {
+  //   const config = {
+  //     contractAddress: "0xf5de760f2e916647fd766B4AD9E85ff943cE3A2b",
+  //     standardContractType: "ERC721",
+  //     chain: Mumbai.chainId,
+  //     method: "balanceOf",
+  //     parameters: [":userAddress"],
+  //     returnValueTest: {
+  //       comparator: ">=",
+  //       value: balance,
+  //     },
+  //   };
+  //   return config;
+  // };
+
   const buildERC721BalanceCondConfig = (balance: number) => {
-    const config = {
-      contractAddress: "0xf5de760f2e916647fd766B4AD9E85ff943cE3A2b",
-      standardContractType: "ERC721",
-      chain: Mumbai.chainId,
-      method: "balanceOf",
-      parameters: [":userAddress"],
-      returnValueTest: {
-        comparator: ">=",
-        value: balance,
+   const config = {
+    contractAddress: '0xb4f48E123De3f87fCb3636F8E20A34797DbBf8Ad',
+    method: 'isMember',
+    parameters: [6, ':userAddress'],
+    functionAbi: {
+      "inputs": [
+      {
+          "internalType": "int32",
+          "name": "groupId",
+          "type": "int32"
       },
-    };
-    return config;
-  };
+      {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+      }
+      ],
+      "name": "isMember",
+      "outputs": [
+      {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+      }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    returnValueTest: {
+      comparator: '==',
+      value: true,
+    },
+   };
+   return config;    
+  };  
 
   const encrypt = () => {
     if (!depStrategy.encrypter) return;
