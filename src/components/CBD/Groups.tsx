@@ -16,20 +16,61 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
     const [isGroupCreating, setIsGroupCreating] = useState<boolean>(false);
     const [groupId, setGroupId] = useState("");
     
-    const buildERC721BalanceCondConfig = (grpId: any) => {
+    // const buildERC721BalanceCondConfig = (grpId: any) => {
+    //     const config = {
+    //         contractAddress: CONTRACT_ADDRESS,
+    //         standardContractType: "ERC721",
+    //         chain: Mumbai.chainId,
+    //         method: "isMember",
+    //         parameters: [":groupId"],
+    //         returnValueTest: {
+    //             comparator: "==",
+    //             value: grpId,
+    //         },
+    //     };
+    //     return config;
+    // };
+
+    const buildERC721BalanceCondConfig = (groupId: any) => {
+        var grpId: number = +groupId;
         const config = {
-            contractAddress: CONTRACT_ADDRESS,
-            standardContractType: "ERC721",
-            chain: Mumbai.chainId,
-            method: "isMember",
-            parameters: [":groupId"],
-            returnValueTest: {
-                comparator: "==",
-                value: grpId,
-            },
+         contractAddress: CONTRACT_ADDRESS,
+         chain: Mumbai.chainId,
+         method: 'isMember',
+         parameters: [grpId, ':userAddress'],
+         functionAbi: {
+           "inputs": [
+           {
+               "internalType": "int32",
+               "name": "groupId",
+               "type": "int32"
+           },
+           {
+               "internalType": "address",
+               "name": "account",
+               "type": "address"
+           }
+           ],
+           "name": "isMember",
+           "outputs": [
+           {
+               "internalType": "bool",
+               "name": "",
+               "type": "bool"
+           }
+           ],
+           "stateMutability": "view",
+           "type": "function"
+         },
+         returnValueTest: {
+           comparator: '==',
+           value: true,
+         },
         };
         return config;
-    };
+      };
+
+
     function getMembersList(members: any[]){
         const names = members.map(m=> m.name).join();
         return names.toString().substring(0, names.length);
@@ -165,7 +206,7 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
                         <th>Name</th>
                         <th>Owner</th>
                         <th>Members</th>
-                        <th>Encrypted Key</th>
+                        <th>Encryption Key</th>
                         <th>Edit</th>
                         <th>Post</th>
                     </tr>
