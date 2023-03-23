@@ -1,16 +1,5 @@
-import { customABICondition } from "./customAbiCondition";
-
-//export const CONTRACT_ADDRESS = "0xb4f48E123De3f87fCb3636F8E20A34797DbBf8Ad";
-export const CONTRACT_ADDRESS = "0x3d94af870ED272Cd5370e4135F9B2Bd0e311d65D"
-const META_DATA_URL = "ipfs://XX"
+export const CONTRACT_ADDRESS = "0x57BB13921CCAcF80b872D29a26Efdf22b25B0170";
 import Web3 from 'web3';
-import Abi from '../scripts/SimpleGroupsMngmt.json';
-import type { AbiItem } from "web3-utils";
-
-//import Contract from "web3-eth-contract";
-
-//Contract.setProvider('https://rpc-mumbai.maticvigil.com:80001');
-// Set up web3 provider and contract instance
 
 const contractABI:any = [
    {
@@ -188,24 +177,18 @@ const contractABI:any = [
        "type": "function"
    }
 ];
-const contractAddress = '0xb4f48E123De3f87fCb3636F8E20A34797DbBf8Ad'; // Replace with your contract's address
-const bob = '0x32AA13b0F477cd3f0620CaD3516E1725B1E66c81';
-const charlie = '0x0E45FAFf8276B40178d731AF26c0b24A19821193';
 
 const web3 = new Web3(window.ethereum);
 
 async function getContract()
 {
-   const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-   console.log(accounts)
    return new web3.eth.Contract(contractABI, CONTRACT_ADDRESS)
 }
 
-export async function createGroup(members: any) {
+export async function getGroupIdFromChain(members: any) {
    const contract = await getContract();
-   console.log(contract)
    try{
-      const result = await contract.methods.createGroup([bob, charlie]).call();
+      const result = await contract.methods.createGroup(members).call();
       console.log(result);
       return result;
    }

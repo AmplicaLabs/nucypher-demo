@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { providers } from "ethers";
-import type { PolicyMessageKit } from "@nucypher/nucypher-ts";
 import Message from "./Message";
 
-function Messages({ account, groups}: any){
+function Messages({ account, groups, isReset, setIsReset}: any){
 
     function getRow(group: any, index: number) {
-        return(group.messages.map((m: any,i: number)=><Message key={i} index={i} group={group} message={m}/>));
+        return(group.messages.map((m: any,i: number)=>
+            <Message key={i} index={i} isReset={isReset} setIsReset={setIsReset} group={group} message={m}/>
+        ));
     }
 
     return(<div className="post-container">

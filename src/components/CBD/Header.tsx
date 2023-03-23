@@ -1,10 +1,16 @@
 import React from "react";
-import { Button } from "react-bootstrap";
-import { CONTRACT_ADDRESS, createGroup } from "../../contracts/contractHelper";
+import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { CONTRACT_ADDRESS, getGroupIdFromChain } from "../../contracts/contractHelper";
 import ConnectWallet from "./ConnectWallet";
-import { USER_ADDRESS } from "./constant";
+import { Members, USER_ADDRESS } from "./constant";
 
 function Header({account, disconnectWallet, connectWallet}: any){
+
+    const renderTooltip = (props: any) => (
+        <Tooltip id="button-tooltip" {...props}>
+          {account}
+        </Tooltip>
+    );
 
     function getAccountName(address: string){
         const name = USER_ADDRESS[address];
@@ -19,20 +25,26 @@ function Header({account, disconnectWallet, connectWallet}: any){
     }
 
     async function handleNewGroup() {
-        await createGroup(["0xF2D4ee677f31e62c6a78F229A572F67289161Bdc", "0x32AA13b0F477cd3f0620CaD3516E1725B1E66c81"]);
+        await getGroupIdFromChain([Members.Bob, Members.Charlie]);
     }
 
     return(<div className="column">
         <div style={{ textAlign: "right" }}>
         <span>
-            Account: 
+            <label className="col-form-label font-weight-bold">Account:&#160;</label>
             {!account ? <ConnectWallet disconnectWallet={disconnectWallet} connectWallet={connectWallet} />:
-                <b>{account? (getAccountName(account) +" : " + shortenAddress(account)): "Not connected"} </b>
+                <OverlayTrigger
+                placement="right"
+                delay={{ show: 250, hide: 400 }}
+                overlay={renderTooltip}
+              >
+                <Button variant="link"><b>{account? (getAccountName(account) +" : " + shortenAddress(account)): "Not connected"} </b></Button>
+              </OverlayTrigger>
             }
         </span>
-        <Button variant="primary" onClick={() => handleNewGroup()}>
+        {/* <Button variant="primary" onClick={() => handleNewGroup()}>
             Test Ethereum Contract
-        </Button>
+        </Button> */}
       </div>
     </div>)
 }

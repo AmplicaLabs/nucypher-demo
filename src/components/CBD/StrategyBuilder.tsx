@@ -3,7 +3,7 @@ import { Mumbai, useEthers } from "@usedapp/core";
 import { providers } from "ethers";
 import { Cohort, Strategy } from "@nucypher/nucypher-ts";
 import { USER_ADDRESS } from "./constant";
-import { createGroup } from "../../contracts/contractHelper";
+import { getGroupIdFromChain } from "../../contracts/contractHelper";
 
 function StrategyBuilder({ isStrategyDeployed, setDepStrategy, setGroupId }: any) {
   const [depStrategyStatus, setDepStrategyStatus] = useState("Deploy Policy");
@@ -19,7 +19,7 @@ function StrategyBuilder({ isStrategyDeployed, setDepStrategy, setGroupId }: any
   const strategyBuild = async (e: any) => {
     e.preventDefault();
 
-    const groupId = await createGroup([USER_ADDRESS.Bob, USER_ADDRESS.Charlie]);
+    const groupId = await getGroupIdFromChain([USER_ADDRESS.Bob, USER_ADDRESS.Charlie]);
     setGroupId(groupId);
     setDeployed(true);
     setDepStrategyStatus("Deploying...");

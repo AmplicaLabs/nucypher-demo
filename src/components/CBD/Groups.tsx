@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import CreateGroup from "./CreateGroup";
 import Post from "./Post";
 import { providers } from "ethers";
-import { Cohort, Strategy } from "@nucypher/nucypher-ts";
+import { Cohort, MessageKit, Strategy } from "@nucypher/nucypher-ts";
 import { Mumbai, useEthers } from "@usedapp/core";
 import { Conditions, ConditionSet } from "@nucypher/nucypher-ts";
+import { CONTRACT_ADDRESS, getGroupIdFromChain } from "../../contracts/contractHelper";
+import { USER_ADDRESS } from "./constant";
 
 function Groups({ account, groups, setGroups, createNewGroup}: any){
     const [show, setShow] = useState(false);
@@ -12,35 +14,42 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
     const [selGroup, setSelGroup] = useState<any>("null");
     const { switchNetwork } = useEthers();
     const [isGroupCreating, setIsGroupCreating] = useState<boolean>(false);
-    const buildERC721BalanceCondConfig = (balance: number) => {
+    const [groupId, setGroupId] = useState("");
+    
+    const buildERC721BalanceCondConfig = (grpId: any) => {
         const config = {
-          contractAddress: "0xf5de760f2e916647fd766B4AD9E85ff943cE3A2b",
-          standardContractType: "ERC721",
-          chain: Mumbai.chainId,
-          method: "balanceOf",
-          parameters: [":userAddress"],
-          returnValueTest: {
-            comparator: ">=",
-            value: balance,
-          },
+            contractAddress: CONTRACT_ADDRESS,
+            standardContractType: "ERC721",
+            chain: Mumbai.chainId,
+            method: "isMember",
+            parameters: [":groupId"],
+            returnValueTest: {
+                comparator: "==",
+                value: grpId,
+            },
         };
         return config;
-      };
+    };
+    function getMembersList(members: any[]){
+        const names = members.map(m=> m.name).join();
+        return names.toString().substring(0, names.length);
+    }
 
     function getRow(group: any, index: number) {
-        const mem = group.members.toString();
+        const mems = getMembersList(group.members);
         return(<tr key={index}>
             <td>
-                Id
+                {group.id}
             </td>
             <td>{group.name}</td>
-            <td>{group.sender}</td>
+            <td>{group.sender.name}</td>
             <td>
-                {mem.substring(0, mem.length)}
+                {mems}
             </td>
-            <td>Encrypted Key</td>
+            {/* <td>Encrypt key</td> */}
+            <td>{group.encryptingKey}</td>
             <td>
-                <button type="button" className="btn btn-link">Edit</button>
+                <button disabled={account != group.sender.address} type="button" className="btn btn-link">Edit</button>
             </td>
             <td>
                 <button type="button" onClick={() => openCreatePost(group)} className="btn btn-link">Post</button>
@@ -56,11 +65,9 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
         setShow(!show);
     }
 
-    async function createNew(name: string, members: string[]) {
+    async function createNew(name: string, members: any[]) {
         setShow(!show);
         setIsGroupCreating(true);
-        // setDepStrategyStatus("Deploying...");
-
         const cohortConfig = {
             threshold: 3,
             shares: 5,
@@ -74,20 +81,27 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
         const strategy = Strategy.create(cohort);
 
         const deployedStrategy = await strategy.deploy(
-        name,
-        web3Provider
+            name,
+            web3Provider
         );
-        const id = groups.length + 1;
+        
+        const chainGroupId = await getGroupIdFromChain(members.map(m => m.address));
+        console.log(deployedStrategy.encrypter.policyEncryptingKey.toString());
+        console.log(deployedStrategy.encrypter.verifyingKey.toString());
+        console.log(deployedStrategy.policy.aliceVerifyingKey.toString());
+        console.log(deployedStrategy.policy.policyKey.toString());
         const group = {
-            id: id,
+            id: chainGroupId,
             strategy: deployedStrategy,
             name,
-            sender: 'Alice',
+            sender: {name: USER_ADDRESS[account], address: account},
             members,
             messages: [],
             encryptedMessages: [],
-            conditionSet: null
-        }
+            conditionSet: null,
+            encryptingKey: deployedStrategy.encrypter.policyEncryptingKey.toString().split(":").pop()
+        };
+        setGroupId(chainGroupId);
         createNewGroup(group);
         setIsGroupCreating(false);
     }
@@ -106,24 +120,25 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
     }
 
     const encrypt = (group: any, depStrategy: any, msg: string) => {
-        console.log(depStrategy)
         if (!depStrategy?.encrypter) return;
     
         const encrypter = depStrategy.encrypter;
     
         const conditionSetBronze = new ConditionSet([
-          new Conditions.Condition(buildERC721BalanceCondConfig(0)),
+          new Conditions.Condition(buildERC721BalanceCondConfig(groupId)),
         ]);
         
-        const encr =  encrypter.encryptMessage(
+        const encr: MessageKit =  encrypter.encryptMessage(
                 JSON.stringify(msg),
                 conditionSetBronze
         );
+        // var str = new TextDecoder().decode(encr.toBytes());
+        // console.log(' text', str);
         group.encryptedMessages = [...group.encryptedMessages, encr];
         group.conditionSet = conditionSetBronze;
         console.log(group);
         return group;
-      };
+    };
 
     function openCreatePost(group: any){
         setShowPost(!showPost);

@@ -1,24 +1,29 @@
 import React, { useState } from "react";
 import { Button, Modal } from "react-bootstrap";
-import { MEMBER_ADDRESS } from "./constant";
+import { NUMBER_OF_ACCOUNTS, USER_ADDRESS } from "./constant";
 
 function CreateGroup({ account, show, handleClose, createNew }: any){
     const [groupName, setGroupName] = useState<string>("");
     const [checkedState, setCheckedState] = useState(
-        new Array(MEMBER_ADDRESS.length - 1).fill(false)
+        new Array(NUMBER_OF_ACCOUNTS - 1).fill(false)
     );
-
-    function handleOnChange(position: number, m: any){
-        const updatedCheckedState = checkedState.map((item, index) =>
-            index === position ? !item : item
+    const [selectedMembers, setSelectedMembers] = useState<any>([]);
+    function handleOnChange(position: number, address: string, name: string, e: any){
+        const updatedCheckedState = checkedState.map((checked, index) =>
+            index === position ? !checked : checked
         );
         setCheckedState(updatedCheckedState);
+        const checked = e.target.checked;
+        if (checked === true) {
+            const mem: any = {name, address, checked: e.target.checked};
+            setSelectedMembers([...selectedMembers, mem])
+        }
     }
 
     function handleNewGroup(){
-        const members = checkedState.map((item, index)=>{
-            if(item === true) {
-                return MEMBER_ADDRESS[index + 1];
+        const members = selectedMembers.map((item: any, index: number)=>{
+            if(item.checked === true) {
+                return item;
             }
         });
 
@@ -39,16 +44,18 @@ function CreateGroup({ account, show, handleClose, createNew }: any){
             </div>
             <div className="form-group mx-sm-4 mb-6">
             {
-                MEMBER_ADDRESS.slice(1, MEMBER_ADDRESS.length).map((m: any, index: number) =>{
-                    return(<span key={index}>
-                        <input 
-                        type="checkbox" 
-                        id={`member-checkbox-${index}`} 
-                        name="members" value="false" 
-                        onChange={() => handleOnChange(index, m)}  
-                        checked={checkedState[index]}/>
-                        <label htmlFor={`member-checkbox-${index}`}>&#160;&#160;{m}&#160;&#160;</label><br/>
-                    </span>)
+                Object.keys(USER_ADDRESS).map((m: any, index: number) =>{
+                    if (m !== account){
+                        return(<span key={index}>
+                            <input 
+                            type="checkbox" 
+                            id={`member-checkbox-${index}`} 
+                            name="members" value="false" 
+                            onChange={(e) => handleOnChange(index, m, USER_ADDRESS[m], e)}  
+                            checked={checkedState[index]}/>
+                            <label htmlFor={`member-checkbox-${index}`}>&#160;&#160;{USER_ADDRESS[m]}&#160;&#160;</label><br/>
+                        </span>)
+                    }
                 })
             }
             </div>

@@ -1,11 +1,9 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./index.css";
-import React from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 import { useState } from "react";
 import { DAppProvider, Config, useEthers } from "@usedapp/core";
-import CBDHeader from "./components/CBD/CBDHeader";
-import Owners from './components/Owner/Owners';
 import { AppContext } from './contexts/AppContext';
 import Header from './components/CBD/Header';
 import Groups from './components/CBD/Groups';
@@ -27,24 +25,15 @@ ReactDOM.render(
 
 function App() {
   const { activateBrowserWallet, deactivate, account } = useEthers();
-  const [decryptedMessages, setDecryptedMessages] = useState([]);
-  const [isBob, setIsBob] = useState<boolean>(false);
-  const [isCharlie, setIsCharlie] = useState<boolean>(false);
-  const [msg, setMsg] = useState<string>("");
   const [groups, setGroups] = useState<any>([]);
+  const [isReset, setIsReset] = useState<boolean>(false);
 
+  useEffect(() => {
+    setIsReset(true);
+  }, [account])
   const value = {
-    isBob,
-    isCharlie,
-    msg,
     activateBrowserWallet,
     account
-  }
-
-  function alicePost(msg: string, isBob: boolean, isCharlie: boolean){
-    setIsBob(isBob);
-    setIsCharlie(isCharlie);
-    setMsg(msg);
   }
 
   function con(){
@@ -56,6 +45,9 @@ function App() {
     setGroups([...groups, group]);
   }
 
+  function disconnect(){
+    deactivate();
+  }
   return (<AppContext.Provider value={value}>
     <div>
       <Header account={account} connectWallet={con} disconnectWallet={disconnect} />
@@ -67,15 +59,8 @@ function App() {
           <Groups account={account} createNewGroup={createNewGroup} groups={groups} setGroups={setGroups}/>
         </div>
         <div className='row'>
-          <Messages account={account} groups={groups}/>
+          <Messages account={account} isReset={isReset} setIsReset={setIsReset} groups={groups}/>
         </div>
-        {/* <Owners
-        alicePost={alicePost}
-        account={account}
-        decryptedMessages={decryptedMessages}
-        connectWallet={con}
-        disconnectWallet={deactivate}
-        /> */}
       </div>
     </div>
     </AppContext.Provider>);
