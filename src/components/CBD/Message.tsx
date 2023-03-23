@@ -66,7 +66,7 @@ function Message({ account, group, index, isReset, setIsReset}: any){
     return(<tr key={index}>
             <td>{group.name}</td>
             <td>{group.sender.name}</td>
-            <td>{ group.encryptedMessages[index]?.ptr}</td>
+            <td>**********</td>
             <td>
                 <button type="button" onClick={()=> handleDecrypt(group, index)} className="btn btn-link">
                    {isDecrypting? "Decrypting..." : "Decrypt"}
