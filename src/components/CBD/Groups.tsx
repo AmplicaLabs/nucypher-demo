@@ -126,7 +126,9 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
             web3Provider
         );
         
-        const chainGroupId = await getGroupIdFromChain(members.map(m => m.address));
+        const txData = await getGroupIdFromChain(account, members.map(m => m.address));
+        console.log(txData?.events?.GroupCreated?.returnValues);
+        const chainGroupId = txData?.events?.GroupCreated?.returnValues.groupId;
         console.log(deployedStrategy.encrypter.policyEncryptingKey.toString());
         console.log(deployedStrategy.encrypter.verifyingKey.toString());
         console.log(deployedStrategy.policy.aliceVerifyingKey.toString());

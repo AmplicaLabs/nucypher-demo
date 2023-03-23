@@ -5,7 +5,7 @@ import { Cohort, Strategy } from "@nucypher/nucypher-ts";
 import { USER_ADDRESS } from "./constant";
 import { getGroupIdFromChain } from "../../contracts/contractHelper";
 
-function StrategyBuilder({ isStrategyDeployed, setDepStrategy, setGroupId }: any) {
+function StrategyBuilder({ account, isStrategyDeployed, setDepStrategy, setGroupId }: any) {
   const [depStrategyStatus, setDepStrategyStatus] = useState("Deploy Policy");
   const { switchNetwork } = useEthers();
   const [ strategyName, setStrategyName ] = useState<string>("");
@@ -19,8 +19,9 @@ function StrategyBuilder({ isStrategyDeployed, setDepStrategy, setGroupId }: any
   const strategyBuild = async (e: any) => {
     e.preventDefault();
 
-    const groupId = await getGroupIdFromChain([USER_ADDRESS.Bob, USER_ADDRESS.Charlie]);
-    setGroupId(groupId);
+    const txData = await getGroupIdFromChain(account, [USER_ADDRESS.Bob, USER_ADDRESS.Charlie]);
+    console.log(txData?.GroupCreated?.returnValues);
+    setGroupId(txData?.GroupCreated?.returnValues.groupId);
     setDeployed(true);
     setDepStrategyStatus("Deploying...");
 
@@ -40,9 +41,6 @@ function StrategyBuilder({ isStrategyDeployed, setDepStrategy, setGroupId }: any
       strategyName,
       web3Provider
     );
-
-    // setDepStrategy(deployedStrategy);
-    // setDepStrategyStatus('Deployed '+ deployedStrategy.label);
   };
 
   return (<div className="form-inline">

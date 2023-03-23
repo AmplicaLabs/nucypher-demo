@@ -1,8 +1,7 @@
 import React from "react";
 import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
-import { CONTRACT_ADDRESS, getGroupIdFromChain } from "../../contracts/contractHelper";
 import ConnectWallet from "./ConnectWallet";
-import { Members, USER_ADDRESS } from "./constant";
+import { USER_ADDRESS } from "./constant";
 
 function Header({account, disconnectWallet, connectWallet}: any){
 
@@ -23,11 +22,6 @@ function Header({account, disconnectWallet, connectWallet}: any){
         }
         return "not connected";
     }
-
-    async function handleNewGroup() {
-        await getGroupIdFromChain([Members.Bob, Members.Charlie]);
-    }
-
     return(<div className="column">
         <div style={{ textAlign: "right" }}>
         <span>

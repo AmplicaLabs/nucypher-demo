@@ -4,9 +4,11 @@ import Message from "./Message";
 function Messages({ account, groups, isReset, setIsReset}: any){
 
     function getRow(group: any, index: number) {
-        return(group.messages.map((m: any,i: number)=>
-            <Message key={i} index={i} isReset={isReset} setIsReset={setIsReset} group={group} message={m}/>
-        ));
+        if(group.messages && group.messages.length >0) {
+            return(group.messages.map((m: any,i: number)=>
+                <Message key={i} index={i} isReset={isReset} setIsReset={setIsReset} group={group} message={m}/>
+            ));
+        }
     }
 
     return(<div className="post-container">

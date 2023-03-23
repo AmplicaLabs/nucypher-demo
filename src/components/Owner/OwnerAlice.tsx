@@ -4,7 +4,7 @@ import ConnectWallet from "../CBD/ConnectWallet";
 import StrategyBuilder from "../CBD/StrategyBuilder";
 var imag = require('../../public/assets/Alice.png');
 
-function OwnerAlice({isStrategyDeployed, alicePost, connectWallet, disconnectWallet, setDepStrategy, setStratDeploying }: any) {
+function OwnerAlice({ isStrategyDeployed, alicePost, connectWallet, disconnectWallet, setDepStrategy, setStratDeploying }: any) {
     const [msg, setMsg] = useState<string>("");
     
     const [isBob, setIsBob] = useState<boolean>(false);
@@ -51,6 +51,7 @@ function OwnerAlice({isStrategyDeployed, alicePost, connectWallet, disconnectWal
               <ConnectWallet disconnectWallet={disconnectWallet} connectWallet={connectWallet} />
             </div>
             <StrategyBuilder
+              account={account}
               isStrategyDeployed={isStrategyDeployed}
               setDepStrategy={setDepStrategy}
               setDepStrategyStatus={setStratDeploying}

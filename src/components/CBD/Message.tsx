@@ -44,6 +44,8 @@ function Message({ account, group, index, isReset, setIsReset}: any){
                 }
     
                 if (Object.values(mk.errors).length > 0) {
+
+                    setError(Object.entries(mk.errors)[0][1]);
                     Object.entries(mk.errors).map(([address, error]) =>
                     console.log(
                         `Subscription message: ${address} - ${error}`
@@ -68,8 +70,7 @@ function Message({ account, group, index, isReset, setIsReset}: any){
             <td>
                 <button type="button" onClick={()=> handleDecrypt(group, index)} className="btn btn-link">
                    {isDecrypting? "Decrypting..." : "Decrypt"}
-                </button><br/>
-                {decryptMsg != "" && <label className="col-form-label"><b><i>{decryptMsg}</i></b></label>}
+                </button>{decryptMsg != "" && <label className="col-form-label"><b><i>{decryptMsg}</i></b></label>}
                 {error != "" && <label className="col-form-label text-danger">{error}</label>}
             </td>
         </tr>)

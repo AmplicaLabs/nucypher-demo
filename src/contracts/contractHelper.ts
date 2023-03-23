@@ -180,15 +180,17 @@ const contractABI:any = [
 
 const web3 = new Web3(window.ethereum);
 
-async function getContract()
+async function getContract(from: string)
 {
-   return new web3.eth.Contract(contractABI, CONTRACT_ADDRESS)
+   return new web3.eth.Contract(contractABI, CONTRACT_ADDRESS, {
+      from: from
+   })
 }
 
-export async function getGroupIdFromChain(members: any) {
-   const contract = await getContract();
+export async function getGroupIdFromChain(from: string, members: string[]) {
+   const contract = await getContract(from);
    try{
-      const result = await contract.methods.createGroup(members).call();
+      const result = await contract.methods.createGroup(members).send();
       console.log(result);
       return result;
    }
