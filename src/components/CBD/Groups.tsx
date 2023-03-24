@@ -127,7 +127,6 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
         );
         
         const txData = await getGroupIdFromChain(account, members.map(m => m.address));
-        console.log(txData?.events?.GroupCreated?.returnValues);
         const chainGroupId = txData?.events?.GroupCreated?.returnValues.groupId;
         console.log(deployedStrategy.encrypter.policyEncryptingKey.toString());
         console.log(deployedStrategy.encrypter.verifyingKey.toString());
@@ -144,6 +143,7 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
             conditionSet: null,
             encryptingKey: deployedStrategy.encrypter.policyEncryptingKey.toString().split(":").pop()
         };
+        console.log(group, account);
         setGroupId(chainGroupId);
         createNewGroup(group);
         setIsGroupCreating(false);
@@ -175,8 +175,6 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
                 JSON.stringify(msg),
                 conditionSetBronze
         );
-        // var str = new TextDecoder().decode(encr.toBytes());
-        // console.log(' text', str);
         group.encryptedMessages = [...group.encryptedMessages, encr];
         group.conditionSet = conditionSetBronze;
         console.log(group);

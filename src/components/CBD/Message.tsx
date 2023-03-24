@@ -1,13 +1,20 @@
-import type { PolicyMessageKit } from "@nucypher/nucypher-ts";
+import type { DeployedStrategy, PolicyMessageKit } from "@nucypher/nucypher-ts";
 import { providers } from "ethers";
 import React, { useEffect } from "react";
 import { useState } from "react";
+import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 
 function Message({ account, group, index, isReset, setIsReset}: any){
 
     const [decryptMsg, setDecryptMsg] = useState("");
     const [error, setError] = useState("");
     const [isDecrypting, setIsDecrypting] = useState<boolean>(false);
+    const [encryptedMsg, setEncryptedMsg] = useState("");
+
+    useEffect(() => {
+       const msg = cipherText();
+       setEncryptedMsg(msg);
+    },[group])
 
     useEffect(() => {
         if(isReset === true) {
@@ -23,7 +30,7 @@ function Message({ account, group, index, isReset, setIsReset}: any){
         setDecryptMsg("");
         setIsDecrypting(true);
         try{
-            const depStrategy = group.strategy;
+            const depStrategy = group.strategy as DeployedStrategy;
             if (!group.strategy.decrypter) return;
     
             let originalMsg: string = "";
@@ -63,10 +70,30 @@ function Message({ account, group, index, isReset, setIsReset}: any){
         }
         
     }
+    const renderTooltip = (props: any) => (
+        <Tooltip id="button-tooltip" {...props}>
+          {cipherText()}
+        </Tooltip>
+    );
+
+    function cipherText (){
+        const encodedEncryptedMessage = Buffer.from(
+            group.encryptedMessages[index].toBytes()
+        ).toString("base64");
+        console.log(encodedEncryptedMessage.length);
+        return encodedEncryptedMessage;
+        //return `${encodedEncryptedMessage.slice(0, 10)}...`;
+    }
     return(<tr key={index}>
             <td>{group.name}</td>
             <td>{group.sender.name}</td>
-            <td>**********</td>
+            <td className="text-wrap">
+                <OverlayTrigger
+                placement="right"
+                delay={{ show: 250, hide: 400 }}
+                overlay={renderTooltip}>
+                <Button variant="link">{encryptedMsg!= "" && encryptedMsg.length>10 && `${encryptedMsg.slice(0, 10)}...`}</Button></OverlayTrigger>
+            </td>
             <td>
                 <button type="button" onClick={()=> handleDecrypt(group, index)} className="btn btn-link">
                    {isDecrypting? "Decrypting..." : "Decrypt"}
