@@ -67,3 +67,10 @@ body {
   height: 210px;
   align-self: center;
 }
+table td
+{
+  word-wrap: break-word;
+  word-break: break-all;  
+  white-space: normal !important;
+  text-align: justify;
+}

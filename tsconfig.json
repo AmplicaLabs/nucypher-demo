@@ -13,6 +13,9 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "importsNotUsedAsValues": "error",
-    "allowJs": true
+    "allowJs": true,
+    "paths": {
+      "*": [ "src/@custom_types/*"]
+    }
   }
 }

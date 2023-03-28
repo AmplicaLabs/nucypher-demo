@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import CreateGroup from "./CreateGroup";
 import Post from "./Post";
 import { providers } from "ethers";
-import { Cohort, MessageKit, Strategy } from "@nucypher/nucypher-ts";
+import { Cohort, DeployedStrategy, Enrico, MessageKit, Alice, Strategy, Configuration } from "@nucypher/nucypher-ts";
 import { Mumbai, useEthers } from "@usedapp/core";
 import { Conditions, ConditionSet } from "@nucypher/nucypher-ts";
+
 import { CONTRACT_ADDRESS, getGroupIdFromChain } from "../../contracts/contractHelper";
 import { USER_ADDRESS } from "./constant";
+import { getPublicPrivateKeyPair } from "../../contracts/keyPairHelper";
+import { privateDecrypt, publicEncrypt } from "crypto";
 
 function Groups({ account, groups, setGroups, createNewGroup}: any){
     const [show, setShow] = useState(false);
@@ -87,7 +90,6 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
             <td>
                 {mems}
             </td>
-            {/* <td>Encrypt key</td> */}
             <td>{group.encryptingKey}</td>
             <td>
                 <button disabled={account != group.sender.address} type="button" className="btn btn-link">Edit</button>
@@ -106,12 +108,12 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
         setShow(!show);
     }
 
-    async function createNew(name: string, members: any[]) {
+    async function createNew(name: string, members: any[], threshold: number, shares: number) {
         setShow(!show);
         setIsGroupCreating(true);
         const cohortConfig = {
-            threshold: 3,
-            shares: 5,
+            threshold,
+            shares,
             porterUri: "https://porter-tapir.nucypher.community",
         };
 
@@ -121,17 +123,22 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
         const cohort = await Cohort.create(cohortConfig);
         const strategy = Strategy.create(cohort);
 
-        const deployedStrategy = await strategy.deploy(
+        const deployedStrategy: DeployedStrategy = await strategy.deploy(
             name,
             web3Provider
         );
-        
         const txData = await getGroupIdFromChain(account, members.map(m => m.address));
         const chainGroupId = txData?.events?.GroupCreated?.returnValues.groupId;
-        console.log(deployedStrategy.encrypter.policyEncryptingKey.toString());
-        console.log(deployedStrategy.encrypter.verifyingKey.toString());
-        console.log(deployedStrategy.policy.aliceVerifyingKey.toString());
-        console.log(deployedStrategy.policy.policyKey.toString());
+
+        const encryptingKey = Buffer.from(
+            deployedStrategy.encrypter.policyEncryptingKey.toBytes()
+        ).toString("base64");
+        const verifyingKey = Buffer.from(
+            deployedStrategy.encrypter.verifyingKey.toBytes()
+        ).toString("base64");
+
+        console.log(encryptingKey);
+        console.log(verifyingKey);
         const group = {
             id: chainGroupId,
             strategy: deployedStrategy,
@@ -141,15 +148,20 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
             messages: [],
             encryptedMessages: [],
             conditionSet: null,
-            encryptingKey: deployedStrategy.encrypter.policyEncryptingKey.toString().split(":").pop()
+            encryptingKey: encryptingKey,
         };
-        console.log(group, account);
         setGroupId(chainGroupId);
         createNewGroup(group);
         setIsGroupCreating(false);
+        var conf:any = {
+            porterUri: "https://porter-tapir.nucypher.community"
+        }
+        var al = Alice.fromSecretKey(conf, deployedStrategy.encrypter.verifyingKey as any , web3Provider);
+        console.log(al)
+
     }
 
-    function createNewPost(group: any, message: string){
+    function createNewPost(group: any, message: string, isKeyRotate: boolean){
         setShowPost(!showPost);
         encrypt(group, group.strategy, message);
 
@@ -162,20 +174,34 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
         setGroups(newGroups);
     }
 
-    const encrypt = (group: any, depStrategy: any, msg: string) => {
+    const encrypt = (group: any, depStrategy: DeployedStrategy, msg: string) => {
         if (!depStrategy?.encrypter) return;
     
-        const encrypter = depStrategy.encrypter;
-    
+        const encrypter = depStrategy.encrypter as Enrico;
+        const encryptingKey = Buffer.from(
+            encrypter.policyEncryptingKey.toBytes()
+        ).toString("base64");
+        console.log(encrypter);
+        console.log(encryptingKey);
         const conditionSetBronze = new ConditionSet([
           new Conditions.Condition(buildERC721BalanceCondConfig(groupId)),
         ]);
-        
-        const encr: MessageKit =  encrypter.encryptMessage(
-                JSON.stringify(msg),
-                conditionSetBronze
+        const keyPair = getPublicPrivateKeyPair();
+        const publicKey = keyPair.public;
+        const privateKey = keyPair.private;
+        const encr = publicEncrypt(publicKey, Buffer.from(msg));
+        const decr = privateDecrypt(privateKey, encr);
+        console.log(encr.toString("base64"));
+        console.log(decr.toString());
+        const encrPrivateKit: MessageKit =  encrypter.encryptMessage(
+            JSON.stringify(privateKey),
+            conditionSetBronze
         );
-        group.encryptedMessages = [...group.encryptedMessages, encr];
+        const encryptedMessage = {
+            encryptedPrivateKey: encrPrivateKit,
+            encryptedMessage: encr
+        };
+        group.encryptedMessages = [...group.encryptedMessages, encryptedMessage];
         group.conditionSet = conditionSetBronze;
         console.log(group);
         return group;

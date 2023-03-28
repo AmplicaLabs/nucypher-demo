@@ -32,7 +32,7 @@ function Header({account, disconnectWallet, connectWallet}: any){
                 delay={{ show: 250, hide: 400 }}
                 overlay={renderTooltip}
               >
-                <Button variant="link"><b>{account? (getAccountName(account) +" : " + shortenAddress(account)): "Not connected"} </b></Button>
+                <Button variant="link" onClick={connectWallet}><b>{account? (getAccountName(account) +" : " + shortenAddress(account)): "Not connected"} </b></Button>
               </OverlayTrigger>
             }
         </span>

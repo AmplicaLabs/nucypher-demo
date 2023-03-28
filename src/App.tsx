@@ -7,7 +7,6 @@ import { DAppProvider, Config, useEthers } from "@usedapp/core";
 import { AppContext } from './contexts/AppContext';
 import Header from './components/CBD/Header';
 import Groups from './components/CBD/Groups';
-import { disconnect } from 'process';
 import Messages from './components/CBD/Messages';
 
 const config: Config = {
@@ -30,13 +29,14 @@ function App() {
 
   useEffect(() => {
     setIsReset(true);
-  }, [account])
+  }, [account]);
+
   const value = {
     activateBrowserWallet,
     account
   }
 
-  function con(){
+  function connect(){
     deactivate();
     activateBrowserWallet();
   }
@@ -50,7 +50,7 @@ function App() {
   }
   return (<AppContext.Provider value={value}>
     <div>
-      <Header account={account} connectWallet={con} disconnectWallet={disconnect} />
+      <Header account={account} connectWallet={connect} disconnectWallet={disconnect} />
       <div>
         <div className="blog-header">
           <h1>Demo</h1>

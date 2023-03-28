@@ -3,10 +3,15 @@ import { Button, Modal } from "react-bootstrap";
 
 function Post({ account, group, show, handleClose, createNewPost }: any){
     const [msg, setMsg] = useState<string>("");
+    const [isKeyRotate, setIsKeyRotate] = useState<boolean>(false);
+
+    function handleKeyRotation(e: any) {
+      setIsKeyRotate(e.target.checked);
+    }
 
     return(<Modal show={show} onHide={handleClose} animation={false}>
         <Modal.Header closeButton>
-          <Modal.Title>Create New Group</Modal.Title>
+          <Modal.Title>Create New Post</Modal.Title>
         </Modal.Header>
         <Modal.Body>
         <div className="form">
@@ -23,13 +28,26 @@ function Post({ account, group, show, handleClose, createNewPost }: any){
                     onChange={(e) => setMsg(e.target.value)} />
                 </div>
             </div>
+            <div className="form-group row">
+                <label htmlFor="name" className="col-sm-3 col-form-label">Message:</label>
+                <div className="col-sm-9">
+                <input 
+                    type="checkbox" 
+                    id="keyrotation"
+                    name="keyrotation"
+                    value="false" 
+                    onChange={(e) => handleKeyRotation(e)}  
+                    checked={isKeyRotate}/>
+                    <label htmlFor="keyrotation">Rotate Key</label>
+                </div>
+            </div>
         </div>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={() => createNewPost(group, msg)}>
+          <Button variant="primary" onClick={() => createNewPost(group, msg, isKeyRotate)}>
             Post
           </Button>
         </Modal.Footer>

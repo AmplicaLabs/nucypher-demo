@@ -26,6 +26,8 @@ function Messages({ account, groups, isReset, setIsReset}: any){
                             Group
                         </th>
                         <th>Sender</th>
+                        <th>Encrypted Key</th>
+                        <th>Decrypted Key</th>
                         <th>Encrypted Message</th>
                         <th>Decrypted Message</th>
                     </tr>
