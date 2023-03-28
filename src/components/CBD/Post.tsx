@@ -29,7 +29,7 @@ function Post({ account, group, show, handleClose, createNewPost }: any){
                 </div>
             </div>
             <div className="form-group row">
-                <label htmlFor="name" className="col-sm-3 col-form-label">Message:</label>
+                <label htmlFor="name" className="col-sm-3 col-form-label">Rotate Key:</label>
                 <div className="col-sm-9">
                 <input 
                     type="checkbox" 
@@ -38,7 +38,6 @@ function Post({ account, group, show, handleClose, createNewPost }: any){
                     value="false" 
                     onChange={(e) => handleKeyRotation(e)}  
                     checked={isKeyRotate}/>
-                    <label htmlFor="keyrotation">Rotate Key</label>
                 </div>
             </div>
         </div>
