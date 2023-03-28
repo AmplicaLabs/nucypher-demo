@@ -13,8 +13,10 @@ function Messages({ account, groups, isReset, setIsReset}: any){
 
     return(<div className="post-container">
         <div className="row">
-            <div className="col-md-6">
-                Messages
+            <div className="col-md-12">
+                <div className="post-table-title-wrap">
+                    <h3>Messages</h3>
+                </div>
             </div>
         </div>
         <div className="row">

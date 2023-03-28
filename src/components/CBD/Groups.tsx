@@ -188,11 +188,13 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
 
     return(<div className="post-container">
         <div className="row">
-            <div className="col-md-6">
-                Groups&#160;&#160;
-                <button className="btn btn-primary" disabled={!account || isGroupCreating} onClick={openCreateGroup}>
-                   {isGroupCreating? "Creating Group...": "Create Group"}
-                </button>
+            <div className="col-md-12">
+                <div className="post-table-title-wrap">
+                    <h3>Groups</h3>
+                    <button className="btn btn-primary site-head-right-btn" disabled={!account || isGroupCreating} onClick={openCreateGroup}>
+                        {isGroupCreating? "Creating Group...": "Create Group"}
+                    </button>
+                </div>
             </div>
         </div>
         <div className="row">

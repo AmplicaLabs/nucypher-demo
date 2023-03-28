@@ -4,6 +4,7 @@
   --main-black: #1E242E; 
   --mid-black: #3F454E; 
   --dark-grey: #7B899B; 
+  --border-color: #B7BFCB;
   --white: #ffffff;
 }
 *{
@@ -82,6 +83,10 @@ body {
   color: var(--primary-color);
   box-shadow: none;
 }
+.site-head-right-btn:disabled{
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);  
+}
 .posts-container {
   display: block;
   justify-content: center;
@@ -89,13 +94,47 @@ body {
 }
 
 .post-container {
-  background: #e2e8d5;
-  display: flex;
-  flex-direction: column;
-  padding: 3%;
-  margin: 2% 2%;
+  background: var(--white);
+  width: calc(100% - 80px);
+  margin: 0 40px;
+  border-radius: 12px;
+  padding: 24px;
+  box-sizing: border-box;
+  box-shadow: 6px 12px 32px rgba(52, 220, 221, 0.12);
 }
-
+.site-data-table-row{
+  margin-top: 40px;
+}
+.post-table-title-wrap{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.post-table-title-wrap h3{
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--main-black);
+  line-height: 24px;
+}
+.table thead th{
+  border: none;
+  border-bottom: 1px solid var(--border-color);
+  padding: 8px 12px;
+  color: var(--main-black);
+  font-weight: 600;
+  font-size: 16px;
+}
+.table tbody td{
+  font-weight: normal;
+  padding: 8px 12px;
+  font-size: 15px;
+  color: var(--mid-black);
+  border-color: var(--border-color);
+}
+.table tbody td .btn-link{
+  color: var(--primary-color);
+}
 .post-heading {
   text-align: center;
   display: block;

@@ -56,10 +56,11 @@ function App() {
           <Header account={account} connectWallet={con} disconnectWallet={disconnect} />
         </div>
 
-        <div className='row'>
+        <div className='site-data-table-row'>
           <Groups account={account} createNewGroup={createNewGroup} groups={groups} setGroups={setGroups}/>
         </div>
-        <div className='row'>
+
+        <div className='site-data-table-row'>
           <Messages account={account} isReset={isReset} setIsReset={setIsReset} groups={groups}/>
         </div>
       </div>
