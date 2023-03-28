@@ -50,11 +50,12 @@ function App() {
   }
   return (<AppContext.Provider value={value}>
     <div>
-      <Header account={account} connectWallet={con} disconnectWallet={disconnect} />
       <div>
-        <div className="blog-header">
-          <h1>Demo</h1>
+        <div className="site-header">
+          <h1 className="site-head-title">Demo</h1>
+          <Header account={account} connectWallet={con} disconnectWallet={disconnect} />
         </div>
+
         <div className='row'>
           <Groups account={account} createNewGroup={createNewGroup} groups={groups} setGroups={setGroups}/>
         </div>

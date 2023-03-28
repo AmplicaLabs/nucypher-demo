@@ -13,10 +13,10 @@ function ConnectWallet({ connectWallet, disconnectWallet }: any){
         setIsConnected(false);
       }
     return(!isConnected?
-            <button disabled={isConnected} className="btn btn-secondary" onClick={connect}>
+            <button disabled={isConnected} className="btn btn-secondary site-head-right-btn" onClick={connect}>
             Connect Wallet
             </button>:
-            <button disabled={!isConnected} className="btn btn-secondary" onClick={disconnect}>
+            <button disabled={!isConnected} className="btn btn-secondary site-head-right-btn" onClick={disconnect}>
             Disconnect
             </button>
     )
