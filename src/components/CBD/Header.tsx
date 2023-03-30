@@ -22,24 +22,19 @@ function Header({account, disconnectWallet, connectWallet}: any){
         }
         return "not connected";
     }
-    return(<div className="column">
-        <div style={{ textAlign: "right" }}>
-        <span>
-            <label className="col-form-label font-weight-bold">Account:&#160;</label>
-            {!account ? <ConnectWallet disconnectWallet={disconnectWallet} connectWallet={connectWallet} />:
-                <OverlayTrigger
-                placement="right"
-                delay={{ show: 250, hide: 400 }}
-                overlay={renderTooltip}
-              >
-                <Button variant="link" onClick={connectWallet}><b>{account? (getAccountName(account) +" : " + shortenAddress(account)): "Not connected"} </b></Button>
-              </OverlayTrigger>
-            }
-        </span>
-        {/* <Button variant="primary" onClick={() => handleNewGroup()}>
-            Test Ethereum Contract
-        </Button> */}
-      </div>
+    return(<div className="site-head-right-wrap"> 
+          <div className="site-head-user-profile-wrap">
+            <img src="https://placehold.jp/60x60.png" alt="" />
+            <h3>{account ? <OverlayTrigger
+              placement="bottom"
+              delay={{ show: 250, hide: 400 }}
+              overlay={renderTooltip}
+            >
+              <Button variant="link">{(getAccountName(account) +" : " + shortenAddress(account))} </Button>
+            </OverlayTrigger>: "Not Connected"}
+            </h3>
+          </div>                         
+          <ConnectWallet account={account} disconnectWallet={disconnectWallet} connectWallet={connectWallet} />
     </div>)
 }
 export default Header;

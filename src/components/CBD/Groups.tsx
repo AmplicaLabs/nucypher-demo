@@ -18,21 +18,6 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
     const { switchNetwork } = useEthers();
     const [isGroupCreating, setIsGroupCreating] = useState<boolean>(false);
     const [groupId, setGroupId] = useState("");
-    
-    // const buildERC721BalanceCondConfig = (grpId: any) => {
-    //     const config = {
-    //         contractAddress: CONTRACT_ADDRESS,
-    //         standardContractType: "ERC721",
-    //         chain: Mumbai.chainId,
-    //         method: "isMember",
-    //         parameters: [":groupId"],
-    //         returnValueTest: {
-    //             comparator: "==",
-    //             value: grpId,
-    //         },
-    //     };
-    //     return config;
-    // };
 
     const buildERC721BalanceCondConfig = (groupId: any) => {
         var grpId: number = +groupId;
@@ -79,6 +64,10 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
         return names.toString().substring(0, names.length);
     }
 
+    function shortenKey(str: string){
+        return `${str.slice(0, 10)}...`
+    }
+
     function getRow(group: any, index: number) {
         const mems = getMembersList(group.members);
         return(<tr key={index}>
@@ -91,6 +80,7 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
                 {mems}
             </td>
             <td>{group.encryptingKey}</td>
+            <td>{group.messageEncryptionKey && shortenKey(group.messageEncryptionKey.split('\n')[1])}</td>
             <td>
                 <button disabled={account != group.sender.address} type="button" className="btn btn-link">Edit</button>
             </td>
@@ -153,18 +143,19 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
         setGroupId(chainGroupId);
         createNewGroup(group);
         setIsGroupCreating(false);
-        var conf:any = {
-            porterUri: "https://porter-tapir.nucypher.community"
-        }
-        var al = Alice.fromSecretKey(conf, deployedStrategy.encrypter.verifyingKey as any , web3Provider);
-        console.log(al)
-
     }
 
     function createNewPost(group: any, message: string, isKeyRotate: boolean){
         setShowPost(!showPost);
-        encrypt(group, group.strategy, message);
-
+        let publicKey: any, privateKey: any;
+        if ((group.messages && group.messages.length === 0) || isKeyRotate === true) {
+            const keyPair = getPublicPrivateKeyPair();
+            publicKey = keyPair.public;
+            privateKey = keyPair.private;
+            group.messageEncryptionKey = publicKey;
+        }
+        encrypt(group, group.strategy, message, publicKey, privateKey);
+        
         const newGroups = groups.map((g: any) => {
             if(g.id === group.id) {
                 g.messages = [...g.messages, message];
@@ -174,7 +165,7 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
         setGroups(newGroups);
     }
 
-    const encrypt = (group: any, depStrategy: DeployedStrategy, msg: string) => {
+    const encrypt = (group: any, depStrategy: DeployedStrategy, msg: string, publicKey: any, privateKey: any) => {
         if (!depStrategy?.encrypter) return;
     
         const encrypter = depStrategy.encrypter as Enrico;
@@ -186,9 +177,6 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
         const conditionSetBronze = new ConditionSet([
           new Conditions.Condition(buildERC721BalanceCondConfig(groupId)),
         ]);
-        const keyPair = getPublicPrivateKeyPair();
-        const publicKey = keyPair.public;
-        const privateKey = keyPair.private;
         const encr = publicEncrypt(publicKey, Buffer.from(msg));
         const decr = privateDecrypt(privateKey, encr);
         console.log(encr.toString("base64"));
@@ -203,7 +191,6 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
         };
         group.encryptedMessages = [...group.encryptedMessages, encryptedMessage];
         group.conditionSet = conditionSetBronze;
-        console.log(group);
         return group;
     };
 
@@ -214,11 +201,13 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
 
     return(<div className="post-container">
         <div className="row">
-            <div className="col-md-6">
-                Groups&#160;&#160;
-                <button className="btn btn-primary" disabled={!account || isGroupCreating} onClick={openCreateGroup}>
-                   {isGroupCreating? "Creating Group...": "Create Group"}
-                </button>
+            <div className="col-md-12">
+                <div className="post-table-title-wrap">
+                    <h3>Groups</h3>
+                    <button className="btn btn-primary site-head-right-btn" disabled={!account || isGroupCreating} onClick={openCreateGroup}>
+                        {isGroupCreating? "Creating Group...": "Create Group"}
+                    </button>
+                </div>
             </div>
         </div>
         <div className="row">
@@ -232,7 +221,8 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
                         <th>Name</th>
                         <th>Owner</th>
                         <th>Members</th>
-                        <th>Encryption Key</th>
+                        <th>Group Encryption Key</th>
+                        <th>Message Encryption Key</th>
                         <th>Edit</th>
                         <th>Post</th>
                     </tr>

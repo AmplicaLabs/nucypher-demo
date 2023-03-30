@@ -57,7 +57,9 @@ function CreateGroup({ account, show, handleClose, createNew }: any){
                     <input type="number" maxLength={50} required className="form-control" id="shares" name="shares" value={shares} onChange={(e) => setShares(+e.target.value)} />
                 </div>
             </div>
-            <div className="form-group mx-sm-4 mb-6">
+            <div className="form-group row">
+            <label htmlFor="members" className="col-sm-2 col-form-label" >Members:</label>
+            <div className="col-sm-10">
             {
                 Object.keys(USER_ADDRESS).map((m: any, index: number) =>{
                     if (m !== account){
@@ -73,6 +75,7 @@ function CreateGroup({ account, show, handleClose, createNew }: any){
                     }
                 })
             }
+            </div>
             </div>
         </div>
         </Modal.Body>

@@ -3,7 +3,6 @@ import { Button, Modal } from "react-bootstrap";
 var CopyToClipboard = require("react-copy-to-clipboard");
 
 function ClipBoardCopy({ msg, show, handleClose }: any): JSX.Element {
-    console.log(msg)
     return (<Modal size="lg" show={show} onHide={handleClose} animation={false}>
     <Modal.Header closeButton>
       <Modal.Title>Node results</Modal.Title>

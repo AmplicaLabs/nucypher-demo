@@ -1,22 +1,12 @@
 import React from "react";
 import { useState } from "react";
 
-function ConnectWallet({ connectWallet, disconnectWallet }: any){
-    const [isConnected, setIsConnected] = useState<boolean>(false);
-    function connect(){
-        connectWallet();
-        setIsConnected(true);
-      }
-  
-      function disconnect(){
-        disconnectWallet();
-        setIsConnected(false);
-      }
-    return(!isConnected?
-            <button disabled={isConnected} className="btn btn-secondary" onClick={connect}>
+function ConnectWallet({ account, connectWallet, disconnectWallet }: any){
+    return(!account?
+            <button className="btn btn-secondary site-head-right-btn" onClick={connectWallet}>
             Connect Wallet
             </button>:
-            <button disabled={!isConnected} className="btn btn-secondary" onClick={disconnect}>
+            <button className="btn btn-secondary site-head-right-btn" onClick={disconnectWallet}>
             Disconnect
             </button>
     )
