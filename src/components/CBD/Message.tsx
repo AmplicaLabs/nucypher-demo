@@ -14,7 +14,7 @@ function Message({ account, group, index, isReset, setIsReset}: any){
     const [decryptMsg, setDecryptMsg] = useState("");
     const [decryptedPrivateKey, setDecryptedPrivateKey] = useState("");
     const [decryptedPrivateKeyShort, setDecryptedPrivateKeyShort] = useState("");
-    const [error, setError] = useState("");
+    const [error, setError] = useState<string | null>(null);
     const [isDecrypting, setIsDecrypting] = useState<boolean>(false);
     const [encryptedKeyShort, setEncryptedKeyShort] = useState("");
     const [encryptedMsgShort, setEncryptedMsgShort] = useState("");
@@ -42,7 +42,7 @@ function Message({ account, group, index, isReset, setIsReset}: any){
             setDecryptedPrivateKey("");
             setDecryptedPrivateKeyShort("");
             setDecryptMsg("");
-            setError("");
+            setError(null);
             setIsDecrypting(false);
             setIsReset(false);
         }
@@ -204,7 +204,7 @@ function Message({ account, group, index, isReset, setIsReset}: any){
                     </Button>
                     </CopyToClipboard>
                 </OverlayTrigger>}
-                {(error.length > 0) && <OverlayTrigger trigger="click" placement="top" overlay={popoverLeftError}>
+                {(error && error?.length > 0) && <OverlayTrigger trigger="click" placement="top" overlay={popoverLeftError}>
                     <Button variant="link" onClick={showPopup}>
                         {error != "" && error}
                     </Button>
@@ -221,7 +221,8 @@ function Message({ account, group, index, isReset, setIsReset}: any){
                 </OverlayTrigger>
             </td>
             <td>
-                {decryptMsg == "" && <button type="button" disabled={decryptedPrivateKey.length === 0} onClick={()=> showDecryptMessagePopup()} className="btn btn-link">
+                {error && <label className="text-danger">Error</label>}
+                {decryptMsg == "" && !error && <button type="button" disabled={decryptedPrivateKey.length === 0} onClick={()=> showDecryptMessagePopup()} className="btn btn-link">
                    {isDecrypting? "Decrypting..." : "Decrypt Message"}
                 </button>}
                 {decryptMsg!= "" && decryptMsg}

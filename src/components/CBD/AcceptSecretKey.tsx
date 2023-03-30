@@ -12,7 +12,7 @@ function AcceptSecretKey({handleDecryptMessage, show, handleClose}: any){
         <div className="form-group row">
             <label htmlFor="name" className="col-sm-3 col-form-label">Private Key:</label>
             <div className="col-sm-9">
-                <textarea rows={10} cols={100} required className="form-control" id="name" name="name" value={secretKey} 
+                <textarea rows={10} cols={100} required autoFocus className="form-control" id="name" name="name" value={secretKey} 
                 onChange={(e) => setSecretKey(e.target.value)} />
             </div>
         </div>

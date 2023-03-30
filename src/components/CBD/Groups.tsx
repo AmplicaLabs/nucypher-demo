@@ -65,7 +65,7 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
     }
 
     function shortenKey(str: string){
-        return `${str.slice(0, 10)}...`
+        return `${str.slice(0, 15)}...`
     }
 
     function getRow(group: any, index: number) {
