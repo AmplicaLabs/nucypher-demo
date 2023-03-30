@@ -1,4 +1,5 @@
 export const CONTRACT_ADDRESS = "0x57BB13921CCAcF80b872D29a26Efdf22b25B0170";
+import { USER_ADDRESS } from '../components/CBD/constant';
 import Web3 from 'web3';
 
 const contractABI:any = [
@@ -199,6 +200,12 @@ export async function getGroupIdFromChain(from: string, members: string[]) {
    }
    return null;
 }
+
+export function getAccountName(address: string){
+    const name = USER_ADDRESS[address];
+    return name;
+}
+
 
 // Add a member to a group
 // async function addMember(groupId, member) {

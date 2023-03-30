@@ -15,6 +15,7 @@ function Message({ account, group, index, isReset, setIsReset}: any){
     const [decryptedPrivateKey, setDecryptedPrivateKey] = useState("");
     const [decryptedPrivateKeyShort, setDecryptedPrivateKeyShort] = useState("");
     const [error, setError] = useState<string | null>(null);
+    const [errorPost, setErrorPost] = useState<string | null>(null);
     const [isDecrypting, setIsDecrypting] = useState<boolean>(false);
     const [encryptedKeyShort, setEncryptedKeyShort] = useState("");
     const [encryptedMsgShort, setEncryptedMsgShort] = useState("");
@@ -25,6 +26,7 @@ function Message({ account, group, index, isReset, setIsReset}: any){
     const [showError, setShowError] = useState<boolean>(true);
     const [showClipboard, setShowClipboard] = useState<boolean>(false);
     const [showDecrPopup, setShowDecrPopup] = useState<boolean>(false);
+    const [isErrorPost, setIsErrorPost] = useState<boolean>(false);
 
     useEffect(() => {
         const prvtKey = group.encryptedMessages[index].encryptedPrivateKey;
@@ -43,8 +45,10 @@ function Message({ account, group, index, isReset, setIsReset}: any){
             setDecryptedPrivateKeyShort("");
             setDecryptMsg("");
             setError(null);
+            setErrorPost(null);
             setIsDecrypting(false);
             setIsReset(false);
+            setIsErrorPost(false)
         }
     }, [isReset])
 
@@ -63,6 +67,8 @@ function Message({ account, group, index, isReset, setIsReset}: any){
         setError("");
         setDecryptMsg("");
         setIsDecrypting(true);
+        setErrorPost("");
+        setIsErrorPost(false);
         try{
             const depStrategy = group.strategy as DeployedStrategy;
             if (!group.strategy.decrypter) return;
@@ -110,9 +116,16 @@ function Message({ account, group, index, isReset, setIsReset}: any){
     function handleDecryptMessage (secretkey: string) {
         if(secretkey) {
             const encrMsg = group.encryptedMessages[index].encryptedMessage;
-            const decr = privateDecrypt(secretkey, encrMsg);
-            setDecryptMsg(decr.toString());
-            setShowDecrPopup(false);
+            try{
+                setIsErrorPost(false);
+                const decr = privateDecrypt(secretkey, encrMsg);
+                setDecryptMsg(decr.toString());
+                setShowDecrPopup(false);
+            } catch(e) {
+                setShowDecrPopup(false);
+                setIsErrorPost(true);
+                setDecryptMsg("Unable to decrypt.");
+            }
         }
     }
     function showDecryptMessagePopup (){
@@ -174,7 +187,7 @@ function Message({ account, group, index, isReset, setIsReset}: any){
     }
     return(<tr key={index}>
             <td>{group.name}</td>
-            <td>{group.sender.name}</td>
+            <td>{group.encryptedMessages[index]?.sender && group.encryptedMessages[index].sender.name}</td>
             <td className="text-wrap">
                 <OverlayTrigger
                     placement="right"
@@ -221,8 +234,8 @@ function Message({ account, group, index, isReset, setIsReset}: any){
                 </OverlayTrigger>
             </td>
             <td>
-                {error && <label className="text-danger">Error</label>}
-                {decryptMsg == "" && !error && <button type="button" disabled={decryptedPrivateKey.length === 0} onClick={()=> showDecryptMessagePopup()} className="btn btn-link">
+                {isErrorPost === true && <label className="text-danger">{ errorPost }</label>}
+                {(decryptMsg == "" || isErrorPost) && <button type="button" disabled={decryptedPrivateKey.length === 0} onClick={()=> showDecryptMessagePopup()} className="btn btn-link">
                    {isDecrypting? "Decrypting..." : "Decrypt Message"}
                 </button>}
                 {decryptMsg!= "" && decryptMsg}

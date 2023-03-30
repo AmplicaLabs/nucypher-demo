@@ -6,7 +6,7 @@ import { Cohort, DeployedStrategy, Enrico, MessageKit, Alice, Strategy, Configur
 import { Mumbai, useEthers } from "@usedapp/core";
 import { Conditions, ConditionSet } from "@nucypher/nucypher-ts";
 
-import { CONTRACT_ADDRESS, getGroupIdFromChain } from "../../contracts/contractHelper";
+import { CONTRACT_ADDRESS, getAccountName, getGroupIdFromChain } from "../../contracts/contractHelper";
 import { USER_ADDRESS } from "./constant";
 import { getPublicPrivateKeyPair } from "../../contracts/keyPairHelper";
 import { privateDecrypt, publicEncrypt } from "crypto";
@@ -148,13 +148,19 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
     function createNewPost(group: any, message: string, isKeyRotate: boolean){
         setShowPost(!showPost);
         let publicKey: any, privateKey: any;
+        
         if ((group.messages && group.messages.length === 0) || isKeyRotate === true) {
             const keyPair = getPublicPrivateKeyPair();
             publicKey = keyPair.public;
             privateKey = keyPair.private;
             group.messageEncryptionKey = publicKey;
+            group.messagePrivateKey = privateKey;
+        } else {
+            const existingGrp = groups.find((g: any) => g.id === group.id);
+            publicKey = existingGrp.messageEncryptionKey;
+            privateKey = existingGrp.messagePrivateKey;
         }
-        encrypt(group, group.strategy, message, publicKey, privateKey);
+        encrypt(account, group, group.strategy, message, publicKey, privateKey);
         
         const newGroups = groups.map((g: any) => {
             if(g.id === group.id) {
@@ -165,7 +171,7 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
         setGroups(newGroups);
     }
 
-    const encrypt = (group: any, depStrategy: DeployedStrategy, msg: string, publicKey: any, privateKey: any) => {
+    const encrypt = (account: string, group: any, depStrategy: DeployedStrategy, msg: string, publicKey: any, privateKey: any) => {
         if (!depStrategy?.encrypter) return;
     
         const encrypter = depStrategy.encrypter as Enrico;
@@ -187,7 +193,11 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
         );
         const encryptedMessage = {
             encryptedPrivateKey: encrPrivateKit,
-            encryptedMessage: encr
+            encryptedMessage: encr,
+            sender: {
+                name: getAccountName(account),
+                address: account
+            }
         };
         group.encryptedMessages = [...group.encryptedMessages, encryptedMessage];
         group.conditionSet = conditionSetBronze;
