@@ -30,7 +30,7 @@ function Message({ account, group, index, isReset, setIsReset}: any){
         const prvtKey = group.encryptedMessages[index].encryptedPrivateKey;
         const msg = cipherText(prvtKey);
         setEncryptedKeyFull(msg);
-        setEncryptedKeyShort(`${msg.slice(0, 10)}...`);
+        setEncryptedKeyShort(`${msg.slice(0, 20)}...`);
 
         const encrMsg = group.encryptedMessages[index].encryptedMessage.toString("base64");
         setEncryptedMsgFull(encrMsg);
@@ -40,6 +40,7 @@ function Message({ account, group, index, isReset, setIsReset}: any){
     useEffect(() => {
         if(isReset === true) {
             setDecryptedPrivateKey("");
+            setDecryptedPrivateKeyShort("");
             setDecryptMsg("");
             setError("");
             setIsDecrypting(false);
@@ -48,7 +49,7 @@ function Message({ account, group, index, isReset, setIsReset}: any){
     }, [isReset])
 
     useEffect(() => {
-        if (decryptedPrivateKey) {
+        if (decryptedPrivateKey && decryptedPrivateKey!= "") {
             const lines = decryptedPrivateKey.split('\n');
             setDecryptedPrivateKeyShort(shortenString(lines[1]));
         }
@@ -220,9 +221,9 @@ function Message({ account, group, index, isReset, setIsReset}: any){
                 </OverlayTrigger>
             </td>
             <td>
-                <button type="button" disabled={decryptedPrivateKey.length === 0} onClick={()=> showDecryptMessagePopup()} className="btn btn-link">
+                {decryptMsg == "" && <button type="button" disabled={decryptedPrivateKey.length === 0} onClick={()=> showDecryptMessagePopup()} className="btn btn-link">
                    {isDecrypting? "Decrypting..." : "Decrypt Message"}
-                </button>
+                </button>}
                 {decryptMsg!= "" && decryptMsg}
                 {showDecrPopup && <AcceptSecretKey handleClose={showDecryptMessagePopup} show={showDecrPopup} handleDecryptMessage={handleDecryptMessage} />}
             </td>
