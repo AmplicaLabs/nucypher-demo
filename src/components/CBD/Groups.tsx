@@ -6,7 +6,7 @@ import { Cohort, DeployedStrategy, Enrico, MessageKit, Alice, Strategy, Configur
 import { Mumbai, useEthers } from "@usedapp/core";
 import { Conditions, ConditionSet } from "@nucypher/nucypher-ts";
 
-import { CONTRACT_ADDRESS, getAccountName, getGroupIdFromChain } from "../../contracts/contractHelper";
+import { CONTRACT_ADDRESS, getAccountName, getGroupIdFromChain, getShortString, shortenKey } from "../../contracts/contractHelper";
 import { USER_ADDRESS } from "./constant";
 import { getPublicPrivateKeyPair } from "../../contracts/keyPairHelper";
 import { privateDecrypt, publicEncrypt } from "crypto";
@@ -64,10 +64,6 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
         return names.toString().substring(0, names.length);
     }
 
-    function shortenKey(str: string){
-        return `${str.slice(0, 15)}...`
-    }
-
     function getRow(group: any, index: number) {
         const mems = getMembersList(group.members);
         return(<tr key={index}>
@@ -79,8 +75,8 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
             <td>
                 {mems}
             </td>
-            <td>{group.encryptingKey}</td>
-            <td>{group.messageEncryptionKey && shortenKey(group.messageEncryptionKey.split('\n')[1])}</td>
+            <td>{getShortString(group.encryptingKey)}</td>
+            <td>{group.messageEncryptionKey && shortenKey(group.messageEncryptionKey)}</td>
             <td>
                 <button disabled={account != group.sender.address} type="button" className="btn btn-link">Edit</button>
             </td>

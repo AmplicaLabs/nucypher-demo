@@ -4,6 +4,8 @@ import { providers } from "ethers";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { Button, OverlayTrigger, Popover, Tooltip } from "react-bootstrap";
+import { shortenKey } from "../../contracts/contractHelper";
+import { getShortString } from "../../contracts/contractHelper";
 import AcceptSecretKey from "./AcceptSecretKey";
 import CFragsResult from "./CfragsResult";
 import ClipBoardCopy from "./ClipBoardCopy";
@@ -32,11 +34,11 @@ function Message({ account, group, index, isReset, setIsReset}: any){
         const prvtKey = group.encryptedMessages[index].encryptedPrivateKey;
         const msg = cipherText(prvtKey);
         setEncryptedKeyFull(msg);
-        setEncryptedKeyShort(`${msg.slice(0, 20)}...`);
+        setEncryptedKeyShort(getShortString(msg) || "");
 
         const encrMsg = group.encryptedMessages[index].encryptedMessage.toString("base64");
         setEncryptedMsgFull(encrMsg);
-        setEncryptedMsgShort(`${encrMsg.slice(0, 10)}...`);
+        setEncryptedMsgShort(getShortString(encrMsg) || "");
     },[group])
 
     useEffect(() => {
@@ -53,15 +55,10 @@ function Message({ account, group, index, isReset, setIsReset}: any){
     }, [isReset])
 
     useEffect(() => {
-        if (decryptedPrivateKey && decryptedPrivateKey!= "") {
-            const lines = decryptedPrivateKey.split('\n');
-            setDecryptedPrivateKeyShort(shortenString(lines[1]));
+        if (decryptedPrivateKey && decryptedPrivateKey != "") {
+            setDecryptedPrivateKeyShort(shortenKey(decryptedPrivateKey) || "");
         }
     }, [decryptedPrivateKey]);
-
-    function shortenString(str: string){
-        return `${str.slice(0, 10)}...`
-    }
 
     async function handleDecrypt(group: any, index: number){
         setError("");
@@ -124,7 +121,7 @@ function Message({ account, group, index, isReset, setIsReset}: any){
             } catch(e) {
                 setShowDecrPopup(false);
                 setIsErrorPost(true);
-                setDecryptMsg("Unable to decrypt.");
+                setErrorPost("Unable to decrypt.");
             }
         }
     }
@@ -234,10 +231,14 @@ function Message({ account, group, index, isReset, setIsReset}: any){
                 </OverlayTrigger>
             </td>
             <td>
-                {isErrorPost === true && <label className="text-danger">{ errorPost }</label>}
-                {(decryptMsg == "" || isErrorPost) && <button type="button" disabled={decryptedPrivateKey.length === 0} onClick={()=> showDecryptMessagePopup()} className="btn btn-link">
-                   {isDecrypting? "Decrypting..." : "Decrypt Message"}
-                </button>}
+                {isErrorPost === true && <span className="text-danger">{errorPost}</span>}
+                {(decryptMsg == "" || isErrorPost) && 
+                    <button type="button"
+                            disabled={decryptedPrivateKey.length === 0} 
+                            onClick={()=> showDecryptMessagePopup()} 
+                            className="btn btn-link">
+                        {isDecrypting? "Decrypting..." : "Decrypt Message"}
+                    </button>}
                 {decryptMsg!= "" && decryptMsg}
                 {showDecrPopup && <AcceptSecretKey handleClose={showDecryptMessagePopup} show={showDecrPopup} handleDecryptMessage={handleDecryptMessage} />}
             </td>

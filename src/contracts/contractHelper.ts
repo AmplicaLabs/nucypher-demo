@@ -206,6 +206,18 @@ export function getAccountName(address: string){
     return name;
 }
 
+export function shortenKey(key: string){
+    const str = key.split('\n');
+    return getShortString(str[1] + str[str.length -1]);
+}
+
+export function getShortString(input: string){
+    const len = input.length;
+    if (input && len > 5) {
+        return `${input.slice(0, 5)}...${input.slice(len - 5)}`;
+      }
+}
+
 
 // Add a member to a group
 // async function addMember(groupId, member) {

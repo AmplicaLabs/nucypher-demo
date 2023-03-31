@@ -3,7 +3,7 @@ import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import ConnectWallet from "./ConnectWallet";
 import { USER_ADDRESS } from "./constant";
 
-function Header({account, disconnectWallet, connectWallet}: any){
+function Header({account, disconnectWallet, connectWallet, isLoading}: any){
 
     const renderTooltip = (props: any) => (
         <Tooltip id="button-tooltip" {...props}>
@@ -34,7 +34,7 @@ function Header({account, disconnectWallet, connectWallet}: any){
             </OverlayTrigger>: "Not Connected"}
             </h3>
           </div>                         
-          <ConnectWallet account={account} disconnectWallet={disconnectWallet} connectWallet={connectWallet} />
+          <ConnectWallet account={account} isLoading={isLoading} disconnectWallet={disconnectWallet} connectWallet={connectWallet} />
     </div>)
 }
 export default Header;
