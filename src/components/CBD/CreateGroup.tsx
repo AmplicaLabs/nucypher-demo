@@ -79,21 +79,31 @@ function CreateGroup({ account, show, handleClose, createNew, creatingMsg, ursul
                 }
                 </div>
             </div>
-            <div className="form-group row">
-                {creatingMsg != "" && <span className="text-primary">{creatingMsg}</span>}
-                {ursulaAddresses != "" && <div>
-                <span className="text-primary">Got Ursula Address:<br/></span>
-                { ursulaAddresses.map((adr: string, i: number) => <span key={i} className="text-success">{adr}<br/></span>)}
-                </div>}
+            <div className="form-group row create-group-custom-row">
+                <div className="create-group-status-row">
+                    <label>Status:</label>
+                    {creatingMsg != "" && <span className="">{creatingMsg}</span>}
+                </div>
+                {ursulaAddresses != "" &&
+                <div className="create-group-address-list-row">
+                    <label className="">Got Ursula Address:</label>
+                    <div className="cg-address-list-items">
+                        { ursulaAddresses.map(
+                            (adr: string, i: number) => 
+                            <span key={i} className="">{adr}</span>
+                            )
+                        }
+                    </div>
+                </div>}                
             </div>
         </div>
         </Modal.Body>
         <Modal.Footer>
           
-          <Button variant="secondary" onClick={handleClose}>
+          <Button className="site-head-right-btn site-btn__border" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={() => handleNewGroup()}>
+          <Button className="site-head-right-btn" onClick={() => handleNewGroup()}>
             Create New
           </Button>
         </Modal.Footer>
