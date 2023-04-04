@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Button, Modal } from "react-bootstrap";
-import { NUMBER_OF_ACCOUNTS, USER_ADDRESS } from "./constant";
+import { NUMBER_OF_ACCOUNTS, USER_ADDRESS } from "./constants";
 
-function CreateGroup({ account, show, handleClose, createNew }: any){
+function CreateGroup({ account, show, handleClose, createNew, creatingMsg, ursulaAddresses }: any){
     const [groupName, setGroupName] = useState<string>("");
     const [threshold, setThreshold] = useState<number>(3);
     const [shares, setShares] = useState<number>(5);
@@ -33,7 +33,9 @@ function CreateGroup({ account, show, handleClose, createNew }: any){
         createNew(groupName, members, threshold, shares);
     }
 
-    return(<Modal show={show} onHide={handleClose} animation={false}>
+    console.log(creatingMsg)
+
+    return(<Modal show={show} onHide={handleClose} size={"lg"} animation={false}>
         <Modal.Header closeButton>
           <Modal.Title>Create New Group</Modal.Title>
         </Modal.Header>
@@ -58,28 +60,36 @@ function CreateGroup({ account, show, handleClose, createNew }: any){
                 </div>
             </div>
             <div className="form-group row">
-            <label htmlFor="members" className="col-sm-2 col-form-label" >Members:</label>
-            <div className="col-sm-10">
-            {
-                Object.keys(USER_ADDRESS).map((m: any, index: number) =>{
-                    if (m !== account){
-                        return(<span key={index}>
-                            <input 
-                            type="checkbox" 
-                            id={`member-checkbox-${index}`} 
-                            name="members" value="false" 
-                            onChange={(e) => handleOnChange(index, m, USER_ADDRESS[m], e)}  
-                            checked={checkedState[index]}/>
-                            <label htmlFor={`member-checkbox-${index}`}>&#160;&#160;{USER_ADDRESS[m]}&#160;&#160;</label><br/>
-                        </span>)
-                    }
-                })
-            }
+                <label htmlFor="members" className="col-sm-2 col-form-label" >Members:</label>
+                <div className="col-sm-10">
+                {
+                    Object.keys(USER_ADDRESS).map((m: any, index: number) =>{
+                        if (m !== account){
+                            return(<span key={index}>
+                                <input 
+                                type="checkbox" 
+                                id={`member-checkbox-${index}`} 
+                                name="members" value="false" 
+                                onChange={(e) => handleOnChange(index, m, USER_ADDRESS[m], e)}  
+                                checked={checkedState[index]}/>
+                                <label htmlFor={`member-checkbox-${index}`}>&#160;&#160;{USER_ADDRESS[m]}&#160;&#160;</label><br/>
+                            </span>)
+                        }
+                    })
+                }
+                </div>
             </div>
+            <div className="form-group row">
+                {creatingMsg != "" && <span className="text-primary">{creatingMsg}</span>}
+                {ursulaAddresses != "" && <div>
+                <span className="text-primary">Got Ursula Address:<br/></span>
+                { ursulaAddresses.map((adr: string, i: number) => <span key={i} className="text-success">{adr}<br/></span>)}
+                </div>}
             </div>
         </div>
         </Modal.Body>
         <Modal.Footer>
+          
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>

@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import ConnectWallet from "./ConnectWallet";
-import { USER_ADDRESS } from "./constant";
+import { USER_ADDRESS } from "./constants";
 
 function Header({account, disconnectWallet, connectWallet, isLoading}: any){
 

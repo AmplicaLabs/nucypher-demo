@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Mumbai, useEthers } from "@usedapp/core";
 import { providers } from "ethers";
 import { Cohort, Strategy } from "@nucypher/nucypher-ts";
-import { USER_ADDRESS } from "./constant";
+import { USER_ADDRESS } from "./constants";
 import { getGroupIdFromChain } from "../../contracts/contractHelper";
 
 function StrategyBuilder({ account, isStrategyDeployed, setDepStrategy, setGroupId }: any) {

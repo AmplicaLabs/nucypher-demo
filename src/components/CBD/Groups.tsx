@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CreateGroup from "./CreateGroup";
 import Post from "./Post";
 import { providers } from "ethers";
@@ -7,7 +7,7 @@ import { Mumbai, useEthers } from "@usedapp/core";
 import { Conditions, ConditionSet } from "@nucypher/nucypher-ts";
 
 import { CONTRACT_ADDRESS, getAccountName, getGroupIdFromChain, getShortString, shortenKey } from "../../contracts/contractHelper";
-import { USER_ADDRESS } from "./constant";
+import { DEPLOYING_ON_POLYGON, GROUP_CREATING, USER_ADDRESS } from "./constants";
 import { getPublicPrivateKeyPair } from "../../contracts/keyPairHelper";
 import { privateDecrypt, publicEncrypt } from "crypto";
 
@@ -18,6 +18,14 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
     const { switchNetwork } = useEthers();
     const [isGroupCreating, setIsGroupCreating] = useState<boolean>(false);
     const [groupId, setGroupId] = useState("");
+    const [groupMsg, setGroupMsg] = useState("asdfsdfs");
+    const [ursulaAddresses, setUrsulaAddresses] = useState<string[]>(["sdfasdfs", "asdfdsafasdf"]);
+
+    useEffect(()=>{
+        if (isGroupCreating) {
+            setGroupMsg("");
+        }
+    },[isGroupCreating])
 
     const buildERC721BalanceCondConfig = (groupId: any) => {
         var grpId: number = +groupId;
@@ -63,28 +71,6 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
         const names = members.map(m=> m.name).join();
         return names.toString().substring(0, names.length);
     }
-
-    function getRow(group: any, index: number) {
-        const mems = getMembersList(group.members);
-        return(<tr key={index}>
-            <td>
-                {group.id}
-            </td>
-            <td>{group.name}</td>
-            <td>{group.sender.name}</td>
-            <td>
-                {mems}
-            </td>
-            <td>{getShortString(group.encryptingKey)}</td>
-            <td>{group.messageEncryptionKey && shortenKey(group.messageEncryptionKey)}</td>
-            <td>
-                <button disabled={account != group.sender.address} type="button" className="btn btn-link">Edit</button>
-            </td>
-            <td>
-                <button type="button" onClick={() => openCreatePost(group)} className="btn btn-link">Post</button>
-            </td>
-        </tr>)
-    }
     
     function openCreateGroup(){
         setShow(!show);
@@ -93,10 +79,10 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
     function handleClose(){
         setShow(!show);
     }
-
+    console.log(show, groupMsg, ursulaAddresses)
     async function createNew(name: string, members: any[], threshold: number, shares: number) {
-        setShow(!show);
         setIsGroupCreating(true);
+        setGroupMsg(GROUP_CREATING);
         const cohortConfig = {
             threshold,
             shares,
@@ -113,7 +99,9 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
             name,
             web3Provider
         );
+        setUrsulaAddresses(deployedStrategy.cohort.ursulaAddresses);
         const txData = await getGroupIdFromChain(account, members.map(m => m.address));
+        setGroupMsg(DEPLOYING_ON_POLYGON);
         const chainGroupId = txData?.events?.GroupCreated?.returnValues.groupId;
 
         const encryptingKey = Buffer.from(
@@ -139,6 +127,7 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
         setGroupId(chainGroupId);
         createNewGroup(group);
         setIsGroupCreating(false);
+        setTimeout(()=> setShow(!show), 3000);
     }
 
     function createNewPost(group: any, message: string, isKeyRotate: boolean){
@@ -205,6 +194,28 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
         setSelGroup(group);
     }
 
+    function getRow(group: any, index: number) {
+        const mems = getMembersList(group.members);
+        return(<tr key={index}>
+            <td>
+                {group.id}
+            </td>
+            <td>{group.name}</td>
+            <td>{group.sender.name}</td>
+            <td>
+                {mems}
+            </td>
+            <td>{getShortString(group.encryptingKey)}</td>
+            <td>{group.messageEncryptionKey && shortenKey(group.messageEncryptionKey)}</td>
+            <td>
+                <button disabled={account != group.sender.address} type="button" className="btn btn-link">Edit</button>
+            </td>
+            <td>
+                <button type="button" onClick={() => openCreatePost(group)} className="btn btn-link">Post</button>
+            </td>
+        </tr>)
+    }
+
     return(<div className="post-container">
         <div className="row">
             <div className="col-md-12">
@@ -239,7 +250,13 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
             </table>
             </div>
         </div>
-        {show && <CreateGroup show={show} account={account} createNew={createNew} handleClose={handleClose} />}
+        {show && <CreateGroup 
+                    show={show} 
+                    account={account} 
+                    createNew={createNew}
+                    handleClose={handleClose} 
+                    creatingMsg={groupMsg} 
+                    ursulaAddresses={ursulaAddresses} />}
         {showPost && <Post 
                     show={showPost} 
                     group={selGroup} 

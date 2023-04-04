@@ -20,3 +20,7 @@ export const USER_ADDRESS: any = {
 // }
 
 
+export const GROUP_CREATING = "Deploying policy on NuCypher network...";
+export const URSULAS_RECEIVED = "Got these Ursulas";
+export const DEPLOYING_ON_POLYGON = "Deploying the group on polygon...";
+
