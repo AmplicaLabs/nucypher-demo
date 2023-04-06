@@ -33,8 +33,6 @@ function CreateGroup({ account, show, handleClose, createNew, creatingMsg, ursul
         createNew(groupName, members, threshold, shares);
     }
 
-    console.log(creatingMsg)
-
     return(<Modal show={show} onHide={handleClose} size={"lg"} animation={false}>
         <Modal.Header closeButton>
           <Modal.Title>Create New Group</Modal.Title>
@@ -86,11 +84,11 @@ function CreateGroup({ account, show, handleClose, createNew, creatingMsg, ursul
                 </div>
                 {ursulaAddresses != "" &&
                 <div className="create-group-address-list-row">
-                    <label className="">Got Ursula Address:</label>
+                    <label className="">Got Ursula Addresses:</label>
                     <div className="cg-address-list-items">
                         { ursulaAddresses.map(
                             (adr: string, i: number) => 
-                            <span key={i} className="">{adr}</span>
+                            <><span key={i} className="">{adr}</span></>
                             )
                         }
                     </div>

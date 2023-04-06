@@ -18,8 +18,8 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
     const { switchNetwork } = useEthers();
     const [isGroupCreating, setIsGroupCreating] = useState<boolean>(false);
     const [groupId, setGroupId] = useState("");
-    const [groupMsg, setGroupMsg] = useState("asdfsdfs");
-    const [ursulaAddresses, setUrsulaAddresses] = useState<string[]>(["sdfasdfs", "asdfdsafasdf"]);
+    const [groupMsg, setGroupMsg] = useState("");
+    const [ursulaAddresses, setUrsulaAddresses] = useState<string[]>([]);
 
     useEffect(()=>{
         if (isGroupCreating) {
