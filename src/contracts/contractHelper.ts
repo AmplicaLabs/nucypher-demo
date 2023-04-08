@@ -1,4 +1,5 @@
-export const CONTRACT_ADDRESS = "0x57BB13921CCAcF80b872D29a26Efdf22b25B0170";
+//export const CONTRACT_ADDRESS = "0x57BB13921CCAcF80b872D29a26Efdf22b25B0170";
+export const CONTRACT_ADDRESS = "0xFB3FB16E21Bd7502778A024ad1a9b05d082431aD";
 import { USER_ADDRESS } from '../components/CBD/constants';
 import Web3 from 'web3';
 

@@ -4,12 +4,13 @@ import { NUMBER_OF_ACCOUNTS, USER_ADDRESS } from "./constants";
 
 function CreateGroup({ account, show, handleClose, createNew, creatingMsg, ursulaAddresses }: any){
     const [groupName, setGroupName] = useState<string>("");
-    const [threshold, setThreshold] = useState<number>(3);
-    const [shares, setShares] = useState<number>(5);
+    const [threshold, setThreshold] = useState<number>(2);
+    const [shares, setShares] = useState<number>(4);
     const [checkedState, setCheckedState] = useState(
         new Array(NUMBER_OF_ACCOUNTS - 1).fill(false)
     );
     const [selectedMembers, setSelectedMembers] = useState<any>([]);
+    const [isGroupCreating, setIsGroupCreating] = useState<boolean>(false);
     
     function handleOnChange(position: number, address: string, name: string, e: any){
         const updatedCheckedState = checkedState.map((checked, index) =>
@@ -24,6 +25,7 @@ function CreateGroup({ account, show, handleClose, createNew, creatingMsg, ursul
     }
 
     function handleNewGroup(){
+        setIsGroupCreating(true);
         const members = selectedMembers.map((item: any, index: number)=>{
             if(item.checked === true) {
                 return item;
@@ -85,14 +87,14 @@ function CreateGroup({ account, show, handleClose, createNew, creatingMsg, ursul
                 {ursulaAddresses != "" &&
                 <div className="create-group-address-list-row">
                     <label className="">Got Ursula Addresses:</label>
-                    <div className="cg-address-list-items">
+                    <div className="cg-address-list-items row">
                         { ursulaAddresses.map(
                             (adr: string, i: number) => 
-                            <><span key={i} className="">{adr}</span></>
+                                <div key={i} className="col-md-12">{adr}<br/></div>
                             )
                         }
                     </div>
-                </div>}                
+                </div>}
             </div>
         </div>
         </Modal.Body>
@@ -101,8 +103,8 @@ function CreateGroup({ account, show, handleClose, createNew, creatingMsg, ursul
           <Button className="site-head-right-btn site-btn__border" onClick={handleClose}>
             Close
           </Button>
-          <Button className="site-head-right-btn" onClick={() => handleNewGroup()}>
-            Create New
+          <Button disabled={isGroupCreating} className="site-head-right-btn" onClick={() => handleNewGroup()}>
+            {isGroupCreating? "Creating new...": "Create New"}
           </Button>
         </Modal.Footer>
       </Modal>)
