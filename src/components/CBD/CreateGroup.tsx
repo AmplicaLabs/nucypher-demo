@@ -1,17 +1,34 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
-import { NUMBER_OF_ACCOUNTS, USER_ADDRESS } from "./constants";
+import { CheckCircleFill, Circle } from 'react-bootstrap-icons';
+import { 
+    DEFAULT_SHARES,
+    DEFAULT_THRESHOLD,
+    GROUP_CREATING,
+    GROUP_DEPLOYING_ON_POLYGON,
+    GROUP_URSULAS_RECEIVED,
+    NUMBER_OF_ACCOUNTS, USER_ADDRESS 
+} from "./constants";
+const groupCreateMessages = [GROUP_CREATING, GROUP_URSULAS_RECEIVED, GROUP_DEPLOYING_ON_POLYGON];
 
-function CreateGroup({ account, show, handleClose, createNew, creatingMsg, ursulaAddresses }: any){
+function CreateGroup({ account, doneStatuses,isGroupCreating, show, handleClose, createNew, ursulaAddresses }: any){
     const [groupName, setGroupName] = useState<string>("");
-    const [threshold, setThreshold] = useState<number>(2);
-    const [shares, setShares] = useState<number>(4);
+    const [threshold, setThreshold] = useState<number>(DEFAULT_THRESHOLD);
+    const [shares, setShares] = useState<number>(DEFAULT_SHARES);
     const [checkedState, setCheckedState] = useState(
         new Array(NUMBER_OF_ACCOUNTS - 1).fill(false)
     );
     const [selectedMembers, setSelectedMembers] = useState<any>([]);
-    const [isGroupCreating, setIsGroupCreating] = useState<boolean>(false);
     
+    useEffect(() => {
+        if (isGroupCreating === false) {
+            setThreshold(DEFAULT_THRESHOLD);
+            setShares(DEFAULT_SHARES);
+            setGroupName("");
+            setCheckedState(new Array(NUMBER_OF_ACCOUNTS - 1).fill(false));
+        }
+    },[isGroupCreating])
+
     function handleOnChange(position: number, address: string, name: string, e: any){
         const updatedCheckedState = checkedState.map((checked, index) =>
             index === position ? !checked : checked
@@ -25,7 +42,6 @@ function CreateGroup({ account, show, handleClose, createNew, creatingMsg, ursul
     }
 
     function handleNewGroup(){
-        setIsGroupCreating(true);
         const members = selectedMembers.map((item: any, index: number)=>{
             if(item.checked === true) {
                 return item;
@@ -80,13 +96,16 @@ function CreateGroup({ account, show, handleClose, createNew, creatingMsg, ursul
                 </div>
             </div>
             <div className="form-group row create-group-custom-row">
-                <div className="create-group-status-row">
-                    <label>Status:</label>
-                    {creatingMsg != "" && <span className="">{creatingMsg}</span>}
-                </div>
+                {groupCreateMessages.map((stMsg, i) =>{
+                return <div key={i} className="create-group-address-list-row">
+                        {doneStatuses[i] === true? 
+                            <CheckCircleFill className="text-success"></CheckCircleFill>
+                            :<Circle></Circle>}&#160;{stMsg}
+                    </div>
+                })}
                 {ursulaAddresses != "" &&
-                <div className="create-group-address-list-row">
-                    <label className="">Got Ursula Addresses:</label>
+                <div className="create-group-address-list-row"><br/><br/>
+                    <label className="">Ursula Addresses:</label>
                     <div className="cg-address-list-items row">
                         { ursulaAddresses.map(
                             (adr: string, i: number) => 

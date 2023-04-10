@@ -1,17 +1,19 @@
 import React, { useState } from "react";
 import { Button, Modal } from "react-bootstrap";
-import { ArrowRepeat } from 'react-bootstrap-icons';
+import { ArrowRepeat, CheckCircleFill, Circle } from 'react-bootstrap-icons';
 import { getPublicPrivateKeyPair } from "../../contracts/keyPairHelper";
 import { ConditionSet, Conditions, DeployedStrategy, Enrico, MessageKit } from "@nucypher/nucypher-ts";
 import { publicEncrypt, privateDecrypt } from "crypto";
 import { CONTRACT_ADDRESS, getAccountName } from "../../contracts/contractHelper";
 import { POST_CREATING, POST_ENCRYPTING_MSG, POST_GENERATING_PAIR } from "./constants";
 import { Mumbai } from "@usedapp/core";
+const groupCreateMessages = [POST_GENERATING_PAIR, POST_ENCRYPTING_MSG, POST_CREATING];
 
 function Post({account, groups, group, show, handleClose, updateGroups }: any){
     const [msg, setMsg] = useState<string>("");
     const [isKeyRotate, setIsKeyRotate] = useState<boolean>(false);
     const [creatingMsg, setCreatingMsg] = useState("");
+    const [doneStatuses, setDoneStatuses] = useState<boolean[]>([true, false, false]);
 
     const buildERC721BalanceCondConfig = (groupId: any) => {
       var grpId: number = +groupId;
@@ -57,8 +59,8 @@ function Post({account, groups, group, show, handleClose, updateGroups }: any){
     }
 
     function createNewPost(group: any, message: string, isKeyRotate: boolean){
-      console.log(POST_GENERATING_PAIR)
       setCreatingMsg(POST_GENERATING_PAIR);
+      setDoneStatuses([true, false, false]);
       let publicKey: any, privateKey: any;
       if ((group.messages && group.messages.length === 0) || isKeyRotate === true) {
           const keyPair = getPublicPrivateKeyPair();
@@ -72,6 +74,7 @@ function Post({account, groups, group, show, handleClose, updateGroups }: any){
           privateKey = existingGrp.messagePrivateKey;
       }
       setCreatingMsg(POST_ENCRYPTING_MSG);
+      setDoneStatuses([true, true, false]);
       encrypt(account, group, group.strategy, message, publicKey, privateKey);
       
       const newGroups = groups.map((g: any) => {
@@ -82,7 +85,7 @@ function Post({account, groups, group, show, handleClose, updateGroups }: any){
       })
       updateGroups(newGroups);
       setCreatingMsg(POST_CREATING);
-      handleClose();
+      setDoneStatuses([true, true, true]);
   }
 
   const encrypt = (account: string, group: any, depStrategy: DeployedStrategy, msg: string, publicKey: any, privateKey: any) => {
@@ -137,7 +140,9 @@ function Post({account, groups, group, show, handleClose, updateGroups }: any){
               </div>
           </div>
           <div className="input-group row">
-              <label htmlFor="keyrotation" className="col-sm-4 col-form-label">Rotate Key <b><ArrowRepeat></ArrowRepeat></b>:</label>
+              <label htmlFor="keyrotation" className="col-sm-4 col-form-label">
+                Rotate Key <b><ArrowRepeat className="text-success"></ArrowRepeat></b>:
+              </label>
               <div className="col-sm-8">
                 <input 
                   className="form-check-input"
@@ -152,10 +157,13 @@ function Post({account, groups, group, show, handleClose, updateGroups }: any){
               </div>
           </div>
           <div className="form-group row create-group-custom-row">
-              <div className="create-group-status-row">
-                  <label>Status:</label>
-                  {creatingMsg != "" && <span className="">{creatingMsg}</span>}
-              </div>               
+              {groupCreateMessages.map((stMsg, i) =>{
+                return <div key={i} className="create-group-address-list-row">
+                        {doneStatuses[i] === true? 
+                            <CheckCircleFill className="text-success"></CheckCircleFill>
+                            :<Circle></Circle>}&#160;{stMsg}
+                    </div>
+                })}
           </div>
       </div>
       </Modal.Body>

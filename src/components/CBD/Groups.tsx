@@ -4,8 +4,8 @@ import Post from "./Post";
 import { providers } from "ethers";
 import { Cohort, DeployedStrategy, Strategy } from "@nucypher/nucypher-ts";
 import { Mumbai, useEthers } from "@usedapp/core";
-import { CONTRACT_ADDRESS, getGroupIdFromChain, getShortString, shortenKey } from "../../contracts/contractHelper";
-import { DEPLOYING_ON_POLYGON, GROUP_CREATING, USER_ADDRESS } from "./constants";
+import { getGroupIdFromChain, getShortString, shortenKey } from "../../contracts/contractHelper";
+import { USER_ADDRESS } from "./constants";
 
 function Groups({ account, groups, setGroups, createNewGroup}: any){
     const [show, setShow] = useState(false);
@@ -13,12 +13,13 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
     const [selGroup, setSelGroup] = useState<any>("null");
     const { switchNetwork } = useEthers();
     const [isGroupCreating, setIsGroupCreating] = useState<boolean>(false);
-    const [groupMsg, setGroupMsg] = useState("");
-    const [ursulaAddresses, setUrsulaAddresses] = useState<string[]>([]);
+    const [ursulaAddresses, setUrsulaAddresses] = useState<string[]>(["0xF2D4ee677f31e62c6a78F229A572F67289161Bdc", "0xF2D4ee677f31e62c6a78F229A572F67289161Bdc"]);
+    const [doneStatuses, setDoneStatuses] = useState<boolean[]>([true, false, false]);
 
     useEffect(()=>{
         if (isGroupCreating === false) {
-            setGroupMsg("");
+            //setDoneStatuses([false, false, false]);
+            setUrsulaAddresses([]);
         }
     },[isGroupCreating])
 
@@ -37,7 +38,7 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
 
     async function createNew(name: string, members: any[], threshold: number, shares: number) {
         setIsGroupCreating(true);
-        setGroupMsg(GROUP_CREATING);
+        setDoneStatuses([true, false, false]);
         const cohortConfig = {
             threshold,
             shares,
@@ -55,7 +56,7 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
             web3Provider
         );
         setUrsulaAddresses(deployedStrategy.cohort.ursulaAddresses);
-        setGroupMsg(DEPLOYING_ON_POLYGON);
+        setDoneStatuses([true, true, false]);
         const txData = await getGroupIdFromChain(account, members.map(m => m.address));
         const chainGroupId = txData?.events?.GroupCreated?.returnValues.groupId;
 
@@ -81,7 +82,8 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
         };
         createNewGroup(group);
         setIsGroupCreating(false);
-        setShow(!show);
+        setDoneStatuses([true, true, true]);
+        //setShow(!show);
     }
 
     function openCreatePost(group: any){
@@ -149,9 +151,10 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
                     show={show} 
                     account={account} 
                     createNew={createNew}
-                    handleClose={handleClose} 
-                    creatingMsg={groupMsg} 
-                    ursulaAddresses={ursulaAddresses} />}
+                    handleClose={handleClose}
+                    ursulaAddresses={ursulaAddresses}
+                    doneStatuses={doneStatuses}
+                    isGroupCreating={isGroupCreating} />}
         {showPost && <Post
                     groups={groups}
                     show={showPost} 
