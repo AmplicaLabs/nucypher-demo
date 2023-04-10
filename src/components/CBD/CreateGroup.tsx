@@ -97,14 +97,15 @@ function CreateGroup({ account, doneStatuses,isGroupCreating, show, handleClose,
             </div>
             <div className="form-group row create-group-custom-row">
                 {groupCreateMessages.map((stMsg, i) =>{
-                return <div key={i} className="create-group-address-list-row">
+                return <div key={i} className="create-group-cr_item">
                         {doneStatuses[i] === true? 
-                            <CheckCircleFill className="text-success"></CheckCircleFill>
-                            :<Circle></Circle>}&#160;{stMsg}
+                            <CheckCircleFill></CheckCircleFill>
+                            :<Circle></Circle>}
+                            <span>{stMsg}</span>
                     </div>
                 })}
                 {ursulaAddresses != "" &&
-                <div className="create-group-address-list-row"><br/><br/>
+                <div className="create-group-address-list-row">
                     <label className="">Ursula Addresses:</label>
                     <div className="cg-address-list-items row">
                         { ursulaAddresses.map(

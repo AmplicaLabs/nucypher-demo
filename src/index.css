@@ -154,7 +154,7 @@ table td
 }
 .create-group-custom-row{
   border: 1px solid var(--border-color);
-  padding: 8px 12px;
+  padding: 16px 12px;
   border-radius: 6px;
   box-sizing: border-box;
   margin: 0 4px;
@@ -173,6 +173,9 @@ table td
 .create-group-custom-row .create-group-address-list-row{
   padding: 0 8px;
   display: flex;
+  margin-top: 16px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-color);
 }
 .create-group-custom-row .create-group-status-row label,
 .create-group-custom-row .create-group-address-list-row label{
@@ -191,6 +194,24 @@ table td
 .create-group-address-list-row .cg-address-list-items span{
   color: var(--main-black);
   margin-right: 16px;
+}
+.create-group-cr_item{
+  display: flex;
+  margin-bottom: 8px;
+  align-items: center;
+}
+.create-group-cr_item:nth-child(3){
+  margin-bottom: 0;
+}
+.create-group-cr_item svg{
+  fill: var(--primary-color);
+  margin-right: 6px;
+  cursor: pointer;
+}
+.create-group-cr_item span{
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--main-black);
 }
 .site-btn__border{
   background-color: transparent;
