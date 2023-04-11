@@ -16,7 +16,7 @@ function CreateGroup({ account, doneStatuses,isGroupCreating, show, handleClose,
     const [threshold, setThreshold] = useState<number>(DEFAULT_THRESHOLD);
     const [shares, setShares] = useState<number>(DEFAULT_SHARES);
     const [checkedState, setCheckedState] = useState(
-        new Array(NUMBER_OF_ACCOUNTS - 1).fill(false)
+        new Array(NUMBER_OF_ACCOUNTS).fill(false)
     );
     const [selectedMembers, setSelectedMembers] = useState<any>([]);
     
@@ -25,7 +25,7 @@ function CreateGroup({ account, doneStatuses,isGroupCreating, show, handleClose,
             setThreshold(DEFAULT_THRESHOLD);
             setShares(DEFAULT_SHARES);
             setGroupName("");
-            setCheckedState(new Array(NUMBER_OF_ACCOUNTS - 1).fill(false));
+            setCheckedState(new Array(checkedState.length).fill(false));
         }
     },[isGroupCreating])
 

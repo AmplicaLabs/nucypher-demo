@@ -12,8 +12,7 @@ const groupCreateMessages = [POST_GENERATING_PAIR, POST_ENCRYPTING_MSG, POST_CRE
 function Post({account, groups, group, show, handleClose, updateGroups }: any){
     const [msg, setMsg] = useState<string>("");
     const [isKeyRotate, setIsKeyRotate] = useState<boolean>(false);
-    const [creatingMsg, setCreatingMsg] = useState("");
-    const [doneStatuses, setDoneStatuses] = useState<boolean[]>([true, false, false]);
+    const [doneStatuses, setDoneStatuses] = useState<boolean[]>([false, false, false]);
 
     const buildERC721BalanceCondConfig = (groupId: any) => {
       var grpId: number = +groupId;
@@ -59,7 +58,6 @@ function Post({account, groups, group, show, handleClose, updateGroups }: any){
     }
 
     function createNewPost(group: any, message: string, isKeyRotate: boolean){
-      setCreatingMsg(POST_GENERATING_PAIR);
       setDoneStatuses([true, false, false]);
       let publicKey: any, privateKey: any;
       if ((group.messages && group.messages.length === 0) || isKeyRotate === true) {
@@ -73,7 +71,6 @@ function Post({account, groups, group, show, handleClose, updateGroups }: any){
           publicKey = existingGrp.messageEncryptionKey;
           privateKey = existingGrp.messagePrivateKey;
       }
-      setCreatingMsg(POST_ENCRYPTING_MSG);
       setDoneStatuses([true, true, false]);
       encrypt(account, group, group.strategy, message, publicKey, privateKey);
       
@@ -84,8 +81,9 @@ function Post({account, groups, group, show, handleClose, updateGroups }: any){
           return g;
       })
       updateGroups(newGroups);
-      setCreatingMsg(POST_CREATING);
       setDoneStatuses([true, true, true]);
+      setMsg("");
+      setIsKeyRotate(false);
   }
 
   const encrypt = (account: string, group: any, depStrategy: DeployedStrategy, msg: string, publicKey: any, privateKey: any) => {
@@ -158,7 +156,7 @@ function Post({account, groups, group, show, handleClose, updateGroups }: any){
           </div>
           <div className="form-group row create-group-custom-row">
               {groupCreateMessages.map((stMsg, i) =>{
-                return <div key={i} className="create-group-address-list-row">
+                return <div key={i} className="create-group-cr_item">
                         {doneStatuses[i] === true? 
                             <CheckCircleFill className="text-success"></CheckCircleFill>
                             :<Circle></Circle>}&#160;{stMsg}

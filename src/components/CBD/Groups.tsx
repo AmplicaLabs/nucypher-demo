@@ -14,7 +14,7 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
     const { switchNetwork } = useEthers();
     const [isGroupCreating, setIsGroupCreating] = useState<boolean>(false);
     const [ursulaAddresses, setUrsulaAddresses] = useState<string[]>(["0xF2D4ee677f31e62c6a78F229A572F67289161Bdc", "0xF2D4ee677f31e62c6a78F229A572F67289161Bdc"]);
-    const [doneStatuses, setDoneStatuses] = useState<boolean[]>([true, false, false]);
+    const [doneStatuses, setDoneStatuses] = useState<boolean[]>([false, false, false]);
 
     useEffect(()=>{
         if (isGroupCreating === false) {
