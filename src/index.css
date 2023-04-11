@@ -195,7 +195,7 @@ table td
   color: var(--main-black);
   margin-right: 16px;
 }
-.create-group-cr_item{
+.create-group-cr_item .create-group-cr_item_gray{
   display: flex;
   margin-bottom: 8px;
   align-items: center;
@@ -208,6 +208,18 @@ table td
   margin-right: 6px;
   cursor: pointer;
 }
+.create-group-cr_item_gray svg{
+  fill: var(--dark-grey);
+  margin-right: 6px;
+  cursor: pointer;
+  color: var(--dark-grey);
+}
+.create-group-cr_item_gray span{
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--dark-grey);
+}
+
 .create-group-cr_item span{
   font-size: 14px;
   font-weight: 500;

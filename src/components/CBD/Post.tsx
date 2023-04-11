@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { ArrowRepeat, CheckCircleFill, Circle } from 'react-bootstrap-icons';
 import { getPublicPrivateKeyPair } from "../../contracts/keyPairHelper";
@@ -13,6 +13,23 @@ function Post({account, groups, group, show, handleClose, updateGroups }: any){
     const [msg, setMsg] = useState<string>("");
     const [isKeyRotate, setIsKeyRotate] = useState<boolean>(false);
     const [doneStatuses, setDoneStatuses] = useState<boolean[]>([false, false, false]);
+    const [isGenMsgKeyPair, setIsGenMsgKeyPair] = useState<boolean>(true);
+
+    useEffect(() => {
+      if ((group.messages && group.messages.length === 0) || isKeyRotate === true) {
+        setIsGenMsgKeyPair(true);
+      } else {
+        setIsGenMsgKeyPair(false);
+      }
+    }, [group]);
+
+    useEffect(() => {
+      if ((group.messages && group.messages.length === 0) || isKeyRotate === true) {
+        setIsGenMsgKeyPair(true);
+      } else {
+        setIsGenMsgKeyPair(false);
+      }
+    }, [isKeyRotate]);
 
     const buildERC721BalanceCondConfig = (groupId: any) => {
       var grpId: number = +groupId;
@@ -155,13 +172,29 @@ function Post({account, groups, group, show, handleClose, updateGroups }: any){
               </div>
           </div>
           <div className="form-group row create-group-custom-row">
-              {groupCreateMessages.map((stMsg, i) =>{
-                return <div key={i} className="create-group-cr_item">
-                        {doneStatuses[i] === true? 
-                            <CheckCircleFill className="text-success"></CheckCircleFill>
-                            :<Circle></Circle>}&#160;{stMsg}
-                    </div>
-                })}
+            {groupCreateMessages.map((stMsg, i) =>{
+                if (i === 0) {
+                  if (isGenMsgKeyPair === true) {
+                    return (<div key={i} className="create-group-cr_item_gray">
+                        <CheckCircleFill className="text-success"></CheckCircleFill>
+                      &#160;{stMsg}
+                    </div>)
+                  } else {
+                    return (<div key={i} className="create-group-cr_item">
+                    {doneStatuses[i] === true? 
+                      <CheckCircleFill className="text-success"></CheckCircleFill>
+                      :<Circle></Circle>}&#160;{stMsg}
+                    </div>)
+                  }
+                } else {
+                  return (<div key={i} className="create-group-cr_item">
+                          {doneStatuses[i] === true? 
+                              <CheckCircleFill className="text-success"></CheckCircleFill>
+                              :<Circle></Circle>}&#160;{stMsg}
+                      </div>)
+                }
+              })
+            }
           </div>
       </div>
       </Modal.Body>

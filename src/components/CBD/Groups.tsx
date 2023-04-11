@@ -18,7 +18,6 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
 
     useEffect(()=>{
         if (isGroupCreating === false) {
-            //setDoneStatuses([false, false, false]);
             setUrsulaAddresses([]);
         }
     },[isGroupCreating])
@@ -29,11 +28,12 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
     }
     
     function openCreateGroup(){
-        setShow(!show);
+        setShow(true);
     }
 
     function handleClose(){
         setShow(!show);
+        setDoneStatuses([false, false, false]);
     }
 
     async function createNew(name: string, members: any[], threshold: number, shares: number) {
@@ -83,7 +83,6 @@ function Groups({ account, groups, setGroups, createNewGroup}: any){
         createNewGroup(group);
         setIsGroupCreating(false);
         setDoneStatuses([true, true, true]);
-        //setShow(!show);
     }
 
     function openCreatePost(group: any){
