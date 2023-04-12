@@ -18,12 +18,16 @@ function Post({account, groups, group, show, handleClose, updateGroups }: any){
     useEffect(() => {
       if ((group.messages && group.messages.length === 0) || isKeyRotate === true) {
         setIsGenMsgKeyPair(true);
+        setIsKeyRotate(true);
       } else {
         setIsGenMsgKeyPair(false);
       }
     }, [group]);
 
     useEffect(() => {
+      if (isKeyRotate === false) {
+        setIsGenMsgKeyPair(true);
+      }
       if ((group.messages && group.messages.length === 0) || isKeyRotate === true) {
         setIsGenMsgKeyPair(true);
       } else {
@@ -167,14 +171,14 @@ function Post({account, groups, group, show, handleClose, updateGroups }: any){
                   name="keyrotation"
                   value="false" 
                   onChange={(e) => handleKeyRotation(e)}  
-                  checked={isKeyRotate}/>
-                  <label htmlFor={`keyrotation`}>&#160;&#160;&#160;&#160;</label>
+                  checked={isKeyRotate || isGenMsgKeyPair}/>
+                  <label htmlFor="keyrotation">&#160;&#160;&#160;&#160;</label>
               </div>
           </div>
           <div className="form-group row create-group-custom-row">
             {groupCreateMessages.map((stMsg, i) =>{
                 if (i === 0) {
-                  if (isGenMsgKeyPair === true) {
+                  if (isGenMsgKeyPair === false) {
                     return (<div key={i} className="create-group-cr_item_gray">
                         <CheckCircleFill className="text-success"></CheckCircleFill>
                       &#160;{stMsg}
